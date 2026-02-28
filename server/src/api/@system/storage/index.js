@@ -18,6 +18,7 @@ const Storage = require('../../../lib/@system/StorageAdapter')
 const LocalAdapter = require('../../../lib/@system/StorageAdapter/LocalStorageAdapter')
 const { ValidationError } = require('../../../lib/@system/Errors')
 const logger = require('../../../lib/@system/Logger')
+const { uploadLimiter } = require('../../../lib/@system/RateLimit')
 
 // ── GET /api/storage/health ───────────────────────────────────────────────────
 // Returns health and configuration of the currently active adapter.
@@ -49,7 +50,7 @@ router.get('/storage/health/all', authenticate, requireAdmin, (req, res, next) =
 // For S3/R2: url is a presigned PUT URL — the client uploads directly to the storage provider.
 // For local: url points to POST /api/storage/local-upload with a short-lived token.
 
-router.post('/storage/upload-url', authenticate, async (req, res, next) => {
+router.post('/storage/upload-url', authenticate, uploadLimiter, async (req, res, next) => {
   try {
     const { filename, contentType, folder, expiresIn } = req.body
 
@@ -81,7 +82,7 @@ router.post('/storage/upload-url', authenticate, async (req, res, next) => {
 // For S3/R2: returns a presigned GET URL.
 // For local: returns the public file URL (no expiry enforced by the adapter).
 
-router.post('/storage/download-url', authenticate, async (req, res, next) => {
+router.post('/storage/download-url', authenticate, uploadLimiter, async (req, res, next) => {
   try {
     const { key, expiresIn } = req.body
 
@@ -132,7 +133,7 @@ router.delete('/storage/object', authenticate, async (req, res, next) => {
 // This endpoint is intentionally unauthenticated via JWT — it uses the short-lived
 // upload token for authorisation instead (same pattern as presigned S3 URLs).
 
-router.post('/storage/local-upload', express.raw({ type: '*/*', limit: '50mb' }), async (req, res, next) => {
+router.post('/storage/local-upload', uploadLimiter, express.raw({ type: '*/*', limit: '50mb' }), async (req, res, next) => {
   try {
     const { token } = req.query
 

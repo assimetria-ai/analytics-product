@@ -9,6 +9,7 @@ const { authenticate } = require('../../../lib/@system/Helpers/auth')
 const ApiKeyRepo = require('../../../db/repos/@system/ApiKeyRepo')
 const { validate } = require('../../../lib/@system/Validation')
 const { CreateApiKeyBody, DeleteApiKeyParams } = require('../../../lib/@system/Validation/schemas/@system/api-keys')
+const { apiKeyLimiter } = require('../../../lib/@system/RateLimit')
 
 const KEY_PREFIX = 'sk_'
 const KEY_BYTES = 32 // 256 bits → 64 hex chars
@@ -33,7 +34,7 @@ router.get('/api-keys', authenticate, async (req, res, next) => {
 })
 
 // POST /api/api-keys — create
-router.post('/api-keys', authenticate, validate({ body: CreateApiKeyBody }), async (req, res, next) => {
+router.post('/api-keys', authenticate, apiKeyLimiter, validate({ body: CreateApiKeyBody }), async (req, res, next) => {
   try {
     const { name, expiresAt } = req.body
 

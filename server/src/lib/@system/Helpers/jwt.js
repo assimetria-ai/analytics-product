@@ -46,12 +46,15 @@ const PRIVATE_KEY = loadKey('JWT_PRIVATE_KEY_FILE', 'JWT_PRIVATE_KEY')
 const PUBLIC_KEY = loadKey('JWT_PUBLIC_KEY_FILE', 'JWT_PUBLIC_KEY')
 
 if (!PRIVATE_KEY || !PUBLIC_KEY) {
-  console.warn(
+  const msg =
     '[jwt] JWT keys not configured — token operations will fail.\n' +
     '  Option A (file-based, recommended): set JWT_PRIVATE_KEY_FILE and JWT_PUBLIC_KEY_FILE to PEM file paths.\n' +
     '  Option B (inline, for Railway/Doppler): set JWT_PRIVATE_KEY and JWT_PUBLIC_KEY as PEM strings.\n' +
     '  Run: npm run generate-keys  to generate and configure keys automatically.'
-  )
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('[jwt] FATAL: JWT keys must be configured in production. ' + msg)
+  }
+  console.warn(msg)
 }
 
 // Promisified versions of the jsonwebtoken callback API

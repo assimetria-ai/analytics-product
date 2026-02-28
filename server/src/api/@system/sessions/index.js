@@ -15,7 +15,7 @@ const SessionRepo = require('../../../db/repos/@system/SessionRepo')
 const { signAccessTokenAsync, verifyTokenAsync } = require('../../../lib/@system/Helpers/jwt')
 const bcrypt = require('bcryptjs')
 const { client: redis, isReady: redisReady } = require('../../../lib/@system/Redis')
-const { loginLimiter } = require('../../../lib/@system/RateLimit')
+const { loginLimiter, refreshLimiter } = require('../../../lib/@system/RateLimit')
 const { validate } = require('../../../lib/@system/Validation')
 const { LoginBody, DeleteSessionParams } = require('../../../lib/@system/Validation/schemas/@system/sessions')
 const {
@@ -182,7 +182,7 @@ router.post('/sessions', loginLimiter, validate({ body: LoginBody }), async (req
 })
 
 // POST /api/sessions/refresh — rotate refresh token and issue a new access token
-router.post('/sessions/refresh', async (req, res, next) => {
+router.post('/sessions/refresh', refreshLimiter, async (req, res, next) => {
   try {
     const refreshToken = req.cookies?.refresh_token
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token' })

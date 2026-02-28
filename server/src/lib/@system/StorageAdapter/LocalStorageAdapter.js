@@ -13,6 +13,14 @@ const path = require('path')
 const { v4: uuidv4 } = require('uuid')
 const logger = require('../Logger')
 
+// Allowed upload extensions whitelist — reject anything not in this set
+const ALLOWED_EXTENSIONS = new Set([
+  'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'ico', 'bmp',
+  'pdf', 'txt', 'md', 'csv',
+  'mp4', 'mp3', 'wav', 'ogg', 'webm',
+  'zip',
+])
+
 function getStorageDir() {
   return process.env.LOCAL_STORAGE_DIR ?? path.join(process.cwd(), 'uploads')
 }
@@ -31,7 +39,10 @@ const LocalStorageAdapter = {
    * @returns {Promise<{ url: string, key: string, publicUrl: string, expiresAt: Date }>}
    */
   async createUploadUrl({ filename, contentType, folder = 'uploads', expiresIn = 300 }) {
-    const ext = filename.includes('.') ? filename.split('.').pop().toLowerCase() : ''
+    const ext = path.extname(filename).toLowerCase().replace(/^\./, '')
+    if (ext && !ALLOWED_EXTENSIONS.has(ext)) {
+      throw Object.assign(new Error(`File type .${ext} is not allowed`), { status: 400 })
+    }
     const key = `${folder}/${uuidv4()}${ext ? '.' + ext : ''}`
     const appUrl = (process.env.APP_URL ?? 'http://localhost:3000').replace(/\/$/, '')
     const uploadToken = Buffer.from(JSON.stringify({ key, contentType, exp: Date.now() + expiresIn * 1000 })).toString('base64url')

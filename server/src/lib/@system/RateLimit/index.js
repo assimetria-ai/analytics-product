@@ -118,4 +118,44 @@ const passwordResetLimiter = createLimiter({
   message: 'Too many password reset attempts. Please try again later.',
 })
 
-module.exports = { loginLimiter, registerLimiter, passwordResetLimiter }
+/** Refresh token rotation: 30 per minute — prevents brute-force token rotation */
+const refreshLimiter = createLimiter({
+  windowMs: 60 * 1000,
+  max: 30,
+  prefix: 'rl:refresh:',
+  message: 'Too many token refresh attempts. Please try again later.',
+})
+
+/** API key creation: 10 per hour — prevents DB flooding with keys */
+const apiKeyLimiter = createLimiter({
+  windowMs: 60 * 60 * 1000,
+  max: 10,
+  prefix: 'rl:api-keys:',
+  message: 'Too many API key creation requests. Please try again later.',
+})
+
+/** File upload: 20 per minute — prevents DoS via frequent/large uploads */
+const uploadLimiter = createLimiter({
+  windowMs: 60 * 1000,
+  max: 20,
+  prefix: 'rl:upload:',
+  message: 'Too many upload requests. Please try again later.',
+})
+
+/** Integration test: 10 per minute — prevents abuse of external service test endpoints */
+const integrationTestLimiter = createLimiter({
+  windowMs: 60 * 1000,
+  max: 10,
+  prefix: 'rl:integration-test:',
+  message: 'Too many integration test requests. Please try again later.',
+})
+
+module.exports = {
+  loginLimiter,
+  registerLimiter,
+  passwordResetLimiter,
+  refreshLimiter,
+  apiKeyLimiter,
+  uploadLimiter,
+  integrationTestLimiter,
+}

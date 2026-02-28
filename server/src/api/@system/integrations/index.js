@@ -11,6 +11,7 @@ const express = require('express')
 const router = express.Router()
 const { authenticate, requireAdmin } = require('../../../lib/@system/Helpers/auth')
 const Integrations = require('../../../lib/@system/Integrations')
+const { integrationTestLimiter } = require('../../../lib/@system/RateLimit')
 
 // ── GET /api/integrations ─────────────────────────────────────────────────────
 
@@ -39,7 +40,7 @@ router.get('/integrations/:id', authenticate, requireAdmin, async (req, res, nex
 // ── POST /api/integrations/:id/test ──────────────────────────────────────────
 // Send a test event through the integration to verify it's working end-to-end.
 
-router.post('/integrations/:id/test', authenticate, requireAdmin, async (req, res, next) => {
+router.post('/integrations/:id/test', authenticate, requireAdmin, integrationTestLimiter, async (req, res, next) => {
   const { id } = req.params
   const appName = process.env.APP_NAME ?? 'App'
 

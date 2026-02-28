@@ -2,32 +2,23 @@ require('dotenv').config()
 
 // ── Run DB migrations before anything else (Railway startCommand fix) ────────
 ;(function runMigrationsSync() {
-  const { execSync } = require('child_process')
+  const { execFileSync, spawnSync } = require('child_process')
   const path = require('path')
+  const node = process.execPath
   const runJs = path.join(__dirname, 'db/migrations/@system/run.js')
+  const dropScript = path.join(__dirname, '..', 'scripts', 'drop-schema-migrations.js')
   const log = (msg) => console.log(`[startup][${new Date().toISOString()}] ${msg}`)
   try {
     log('Running DB migrations...')
-    execSync(`node "${runJs}"`, { stdio: 'inherit' })
+    execFileSync(node, [runJs], { stdio: 'inherit' })
     log('Migrations done.')
   } catch (e) {
     log(`Migrations failed (${e.message}) — clearing schema_migrations and retrying`)
     try {
-      const { Client } = require('pg')
-      const _sslCfg = process.env.NODE_ENV === 'production'
-        ? (process.env.DB_SSL_CA ? { ca: require('fs').readFileSync(process.env.DB_SSL_CA) } : true)
-        : undefined
-      const client = new Client({ connectionString: process.env.DATABASE_URL, ssl: _sslCfg })
-      // sync drop via spawnSync
-      const { spawnSync } = require('child_process')
-      spawnSync('node', ['-e', `
-        const {Client}=require('pg');
-        const ssl=process.env.NODE_ENV==='production'?(process.env.DB_SSL_CA?{ca:require('fs').readFileSync(process.env.DB_SSL_CA)}:true):undefined;
-        const c=new Client({connectionString:process.env.DATABASE_URL,ssl});
-        c.connect().then(()=>c.query('DROP TABLE IF EXISTS schema_migrations')).then(()=>c.end()).catch(e=>{console.error(e);process.exit(1)});
-      `], { stdio: 'inherit', env: process.env })
+      // Drop schema_migrations using a dedicated script (avoids inline -e code anti-pattern)
+      spawnSync(node, [dropScript], { stdio: 'inherit', env: process.env })
     } catch (_) {}
-    execSync(`node "${runJs}"`, { stdio: 'inherit' })
+    execFileSync(node, [runJs], { stdio: 'inherit' })
     log('Migrations done after recovery.')
   }
 })()
