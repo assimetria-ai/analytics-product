@@ -7,6 +7,7 @@ const pinoHttp = require('pino-http')
 
 const logger = require('./lib/@system/Logger')
 const { cors, securityHeaders } = require('./lib/@system/Middleware')
+const { apiLimiter } = require('./lib/@system/RateLimit')
 const systemRoutes = require('./routes/@system')
 const customRoutes = require('./routes/@custom')
 
@@ -27,9 +28,8 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(pinoHttp({ logger }))
 }
 
-// Local file uploads — serve before API routes so /uploads/* resolves correctly
-const localUploadsDir = process.env.LOCAL_STORAGE_DIR ?? path.join(__dirname, '..', 'uploads')
-app.use('/uploads', express.static(localUploadsDir))
+// General rate limiting for all API routes (baseline DoS protection)
+app.use('/api', apiLimiter)
 
 // Routes
 app.use('/api', systemRoutes)
