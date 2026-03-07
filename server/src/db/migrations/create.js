@@ -9,11 +9,11 @@
  * or db/migrations/@system/ with --system flag.
  *
  * Usage:
- *   node src/db/migrations/@system/create.js <name>             # creates @custom migration
- *   node src/db/migrations/@system/create.js <name> --system   # creates @system migration
+ *   node src/db/migrations/create.js <name>             # creates @custom migration
+ *   node src/db/migrations/create.js <name> --system   # creates @system migration
  *
  * Examples:
- *   node src/db/migrations/@system/create.js add_stripe_price_id
+ *   node src/db/migrations/create.js add_stripe_price_id
  *   npm run migrate:create add_stripe_price_id
  *   npm run migrate:create -- add_stripe_price_id --system
  *
@@ -24,8 +24,8 @@
 const fs = require('fs')
 const path = require('path')
 
-const SYSTEM_DIR = path.join(__dirname, '../@system')
-const CUSTOM_DIR = path.join(__dirname, '../@custom')
+const SYSTEM_DIR = path.join(__dirname, '@system')
+const CUSTOM_DIR = path.join(__dirname, '@custom')
 
 const EXCLUDED = new Set(['run.js', 'index.js', 'create.js'])
 
