@@ -64,15 +64,17 @@ function generateTemplate(fileName, description) {
 /**
  * Migration – ${description}
  *
- * TODO: implement up() and down()
+ * Implement up() to apply schema changes, down() to revert them.
  */
 
 exports.up = async (db) => {
+  // Apply your schema changes here
   // await db.none(\`CREATE TABLE IF NOT EXISTS ...\`)
   console.log('[${fileName}] applied')
 }
 
 exports.down = async (db) => {
+  // Revert your schema changes here
   // await db.none('DROP TABLE IF EXISTS ... CASCADE')
   console.log('[${fileName}] rolled back')
 }
