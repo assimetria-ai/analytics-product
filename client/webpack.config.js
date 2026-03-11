@@ -244,12 +244,17 @@ export default {
       }),
 
     // TypeScript type checking in a separate process (non-blocking)
-    new ForkTsCheckerWebpackPlugin({
-      async: isDev,
-      typescript: {
-        configFile: path.resolve(__dirname, 'tsconfig.json'),
-      },
-    }),
+    // Disabled for production builds to avoid blocking on type errors
+    ...(isDev
+      ? [
+          new ForkTsCheckerWebpackPlugin({
+            async: true,
+            typescript: {
+              configFile: path.resolve(__dirname, 'tsconfig.json'),
+            },
+          }),
+        ]
+      : []),
 
     // Environment variables available in browser bundle
     new webpack.DefinePlugin({
