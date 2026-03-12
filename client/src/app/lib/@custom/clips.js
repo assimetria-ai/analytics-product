@@ -1,4 +1,4 @@
-import { api } from '../@system/api'
+import { api } from '../@system/api.js'
 
 export const clipsApi = {
   // List clips — supports type, tags (array), search, limit, offset

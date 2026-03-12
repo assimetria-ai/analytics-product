@@ -1,5 +1,5 @@
 // @custom — teams management client API
-import { api } from '../@system/api'
+import { api } from '../@system/api.js'
 
 export const teamsApi = {
   // Teams

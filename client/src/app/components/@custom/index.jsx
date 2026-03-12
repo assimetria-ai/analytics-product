@@ -7,5 +7,5 @@
 // import MyCustomComponent from './MyCustomComponent'
 // export { MyCustomComponent }
 
-export { PasswordStrengthIndicator } from './PasswordStrengthIndicator'
-export { HeroSection } from './HeroSection/HeroSection'
+export { PasswordStrengthIndicator } from './PasswordStrengthIndicator.jsx'
+export { HeroSection } from './HeroSection/HeroSection.jsx'

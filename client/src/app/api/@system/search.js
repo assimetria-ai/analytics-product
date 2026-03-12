@@ -2,7 +2,7 @@
 // Wraps the SearchAdapter API endpoints exposed by the server.
 // Do not modify this file. Add product-specific search calls in @custom/
 
-import { apiRequest } from './utils'
+import { apiRequest } from './utils.js'
 
 // ─── Search ──────────────────────────────────────────────────────────────────
 

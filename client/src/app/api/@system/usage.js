@@ -1,6 +1,6 @@
 // @system — Usage and cost tracking API client
 
-import { api } from './api'
+import { api } from './api.js'
 
 /**
  * Get dashboard cost summary
