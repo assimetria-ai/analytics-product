@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Camera, Mail, User as UserIcon, Trash2 } from 'lucide-react'
 import { SettingsSection, SettingsRow } from './UserSettings'
 import { Button } from '../Button/Button'
-import { Form, FormField, FormLabel, FormInput, FormTextarea } from '../Form/Form'
+import { FormField, Input, Textarea } from '../Form/Form'
 import { Avatar } from '../Avatar/Avatar'
 import { cn } from '@/app/lib/@system/utils'
 
@@ -50,10 +50,10 @@ export function ProfileSettings({ user, onUpdate }) {
         title="Public profile"
         description="This information will be visible to other users"
       >
-        <Form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           {/* Avatar upload */}
           <div className="mb-6">
-            <FormLabel htmlFor="avatar">Profile picture</FormLabel>
+            <label htmlFor="avatar" className="text-sm font-medium">Profile picture</label>
             <div className="flex items-center gap-4 mt-2">
               <Avatar
                 src={formData.avatar}
@@ -93,9 +93,8 @@ export function ProfileSettings({ user, onUpdate }) {
           </div>
 
           {/* Name */}
-          <FormField>
-            <FormLabel htmlFor="name">Full name</FormLabel>
-            <FormInput
+          <FormField label="Full name">
+            <Input
               id="name"
               type="text"
               value={formData.name}
@@ -106,16 +105,15 @@ export function ProfileSettings({ user, onUpdate }) {
           </FormField>
 
           {/* Email */}
-          <FormField>
-            <FormLabel htmlFor="email">Email address</FormLabel>
-            <FormInput
+          <FormField label="Email address">
+            <Input
               id="email"
               type="email"
               value={formData.email}
               onChange={handleChange('email')}
               placeholder="john@example.com"
               required
-              disabled // Usually can't change email directly
+              disabled
             />
             <p className="text-xs text-muted-foreground mt-1">
               Contact support to change your email address
@@ -123,9 +121,8 @@ export function ProfileSettings({ user, onUpdate }) {
           </FormField>
 
           {/* Bio */}
-          <FormField>
-            <FormLabel htmlFor="bio">Bio</FormLabel>
-            <FormTextarea
+          <FormField label="Bio">
+            <Textarea
               id="bio"
               value={formData.bio}
               onChange={handleChange('bio')}
@@ -155,7 +152,7 @@ export function ProfileSettings({ user, onUpdate }) {
               Save changes
             </Button>
           </div>
-        </Form>
+        </form>
       </SettingsSection>
 
       {/* Danger zone */}

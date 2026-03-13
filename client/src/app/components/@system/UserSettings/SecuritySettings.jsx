@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Lock, Key, Smartphone, Monitor, AlertTriangle, Check, X } from 'lucide-react'
 import { SettingsSection, SettingsRow } from './UserSettings'
 import { Button } from '../Button/Button'
-import { Form, FormField, FormLabel, FormInput } from '../Form/Form'
+import { FormField, Input } from '../Form/Form'
 import { Badge } from '../Badge/Badge'
 import { cn } from '@/app/lib/@system/utils'
 
@@ -160,10 +160,9 @@ function PasswordChangeForm({ onCancel }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit} className="space-y-4">
-      <FormField>
-        <FormLabel htmlFor="currentPassword">Current password</FormLabel>
-        <FormInput
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <FormField label="Current password">
+        <Input
           id="currentPassword"
           type="password"
           value={formData.currentPassword}
@@ -172,32 +171,24 @@ function PasswordChangeForm({ onCancel }) {
         />
       </FormField>
 
-      <FormField>
-        <FormLabel htmlFor="newPassword">New password</FormLabel>
-        <FormInput
+      <FormField label="New password" error={errors.newPassword}>
+        <Input
           id="newPassword"
           type="password"
           value={formData.newPassword}
           onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
           required
         />
-        {errors.newPassword && (
-          <p className="text-xs text-destructive mt-1">{errors.newPassword}</p>
-        )}
       </FormField>
 
-      <FormField>
-        <FormLabel htmlFor="confirmPassword">Confirm new password</FormLabel>
-        <FormInput
+      <FormField label="Confirm new password" error={errors.confirmPassword}>
+        <Input
           id="confirmPassword"
           type="password"
           value={formData.confirmPassword}
           onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
           required
         />
-        {errors.confirmPassword && (
-          <p className="text-xs text-destructive mt-1">{errors.confirmPassword}</p>
-        )}
       </FormField>
 
       <div className="flex justify-end gap-2">
@@ -208,7 +199,7 @@ function PasswordChangeForm({ onCancel }) {
           Change password
         </Button>
       </div>
-    </Form>
+    </form>
   )
 }
 
