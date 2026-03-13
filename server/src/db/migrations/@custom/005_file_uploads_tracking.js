@@ -1,17 +1,17 @@
 /**
  * Migration: File Uploads Tracking and Storage Quotas
  * 
- * Creates tables and views for:
- * - Tracking all file uploads per user
- * - Storage quota management
- * - File metadata and lifecycle
+ * Extends the file_uploads table (created by @system schema) with:
+ * - Additional columns for folder organization and soft delete
+ * - Storage quota management table
+ * - Storage usage view and helper function
  */
 
 'use strict'
 
 module.exports = {
   async up(db) {
-    // Create file_uploads table for tracking all uploaded files
+    // Ensure file_uploads table exists (may already be created by @system schema)
     await db.none(`
       CREATE TABLE IF NOT EXISTS file_uploads (
         id BIGSERIAL PRIMARY KEY,
@@ -25,17 +25,33 @@ module.exports = {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         deleted_at TIMESTAMPTZ,
         
-        -- Constraints
         CONSTRAINT file_uploads_size_positive CHECK (size_bytes > 0)
       );
     `)
 
-    // Indexes for performance
+    // Add columns that may be missing if table was created by @system schema
+    // (which has different column names/set)
+    const addColumnIfNotExists = async (table, column, definition) => {
+      const exists = await db.oneOrNone(`
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = $1 AND column_name = $2
+      `, [table, column])
+      if (!exists) {
+        await db.none(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`)
+      }
+    }
+
+    await addColumnIfNotExists('file_uploads', 'folder', "VARCHAR(200) DEFAULT 'uploads'")
+    await addColumnIfNotExists('file_uploads', 'storage_key', 'VARCHAR(500)')
+    await addColumnIfNotExists('file_uploads', 'original_filename', 'VARCHAR(500)')
+    await addColumnIfNotExists('file_uploads', 'deleted_at', 'TIMESTAMPTZ')
+
+    // Indexes for performance (all idempotent)
     await db.none(`
-      CREATE INDEX IF NOT EXISTS idx_file_uploads_user_id ON file_uploads(user_id) WHERE deleted_at IS NULL;
+      CREATE INDEX IF NOT EXISTS idx_file_uploads_user_id ON file_uploads(user_id);
       CREATE INDEX IF NOT EXISTS idx_file_uploads_deleted_at ON file_uploads(deleted_at);
       CREATE INDEX IF NOT EXISTS idx_file_uploads_created_at ON file_uploads(created_at);
-      CREATE INDEX IF NOT EXISTS idx_file_uploads_folder ON file_uploads(folder) WHERE deleted_at IS NULL;
+      CREATE INDEX IF NOT EXISTS idx_file_uploads_folder ON file_uploads(folder);
     `)
 
     // View for user storage usage
@@ -44,9 +60,9 @@ module.exports = {
       SELECT 
         user_id,
         COUNT(*) as file_count,
-        SUM(size_bytes) as total_bytes,
-        ROUND(SUM(size_bytes) / (1024.0 * 1024.0), 2) as total_mb,
-        ROUND(SUM(size_bytes) / (1024.0 * 1024.0 * 1024.0), 2) as total_gb,
+        COALESCE(SUM(size_bytes), 0) as total_bytes,
+        ROUND(COALESCE(SUM(size_bytes), 0) / (1024.0 * 1024.0), 2) as total_mb,
+        ROUND(COALESCE(SUM(size_bytes), 0) / (1024.0 * 1024.0 * 1024.0), 2) as total_gb,
         MAX(created_at) as last_upload_at
       FROM file_uploads
       WHERE deleted_at IS NULL
@@ -58,10 +74,9 @@ module.exports = {
       CREATE TABLE IF NOT EXISTS storage_quotas (
         id SERIAL PRIMARY KEY,
         user_id INTEGER UNIQUE REFERENCES users(id) ON DELETE CASCADE,
-        quota_bytes BIGINT NOT NULL DEFAULT 104857600, -- 100MB default
+        quota_bytes BIGINT NOT NULL DEFAULT 104857600,
         updated_at TIMESTAMPTZ DEFAULT NOW(),
         
-        -- Constraints
         CONSTRAINT storage_quotas_positive CHECK (quota_bytes > 0)
       );
     `)
@@ -100,7 +115,7 @@ module.exports = {
       $$ LANGUAGE plpgsql STABLE;
     `)
 
-    console.log('[Migration] Created file_uploads tracking tables and storage quota system')
+    console.log('[005_file_uploads_tracking] Created file_uploads extensions + storage quota system')
   },
 
   async down(db) {
@@ -109,6 +124,6 @@ module.exports = {
     await db.none('DROP VIEW IF EXISTS user_storage_usage;')
     await db.none('DROP TABLE IF EXISTS file_uploads CASCADE;')
     
-    console.log('[Migration] Dropped file tracking and storage quota tables')
+    console.log('[005_file_uploads_tracking] Dropped file tracking and storage quota tables')
   },
 }
