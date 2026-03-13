@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Mail, Bell, MessageSquare, Activity, CreditCard } from 'lucide-react'
-import { SettingsSection, SettingsRow } from './UserSettings'
+import { SettingsSection, SettingsRow } from './UserSettings.jsx'
 import { Switch } from '../ui/switch'
 import { Button } from '../Button/Button'
 

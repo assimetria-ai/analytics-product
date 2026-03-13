@@ -17,7 +17,7 @@ import { Button } from '../../../components/@system/ui/button'
 import { info } from '../../../../config/@system/info'
 import {
   HELP_ARTICLES,
-  HELP_CATEGORIES } from './HelpCenterPage'
+  HELP_CATEGORIES } from './HelpCenterPage.jsx'
 
 // ── Markdown-style renderer ──────────────────────────────────────────────────
 // Renders a minimal subset: headings, paragraphs, code blocks, inline code,

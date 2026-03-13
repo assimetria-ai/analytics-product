@@ -12,7 +12,7 @@ import { Header } from '../../../components/@system/Header/Header'
 import { Footer } from '../../../components/@system/Footer/Footer'
 import { Card, CardContent } from '../../../components/@system/Card/Card'
 import { Button } from '../../../components/@system/ui/button'
-import { BLOG_POSTS } from './BlogPage'
+import { BLOG_POSTS } from './BlogPage.jsx'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

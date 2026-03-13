@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Sun, Moon, Monitor, Globe, Clock, Layout } from 'lucide-react'
-import { SettingsSection, SettingsRow } from './UserSettings'
+import { SettingsSection, SettingsRow } from './UserSettings.jsx'
 import { Select } from '../Select/Select'
 import { Button } from '../Button/Button'
 import { cn } from '@/app/lib/@system/utils'

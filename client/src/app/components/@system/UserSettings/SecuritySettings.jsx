@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Lock, Key, Smartphone, Monitor, AlertTriangle, Check, X } from 'lucide-react'
-import { SettingsSection, SettingsRow } from './UserSettings'
+import { SettingsSection, SettingsRow } from './UserSettings.jsx'
 import { Button } from '../Button/Button'
 import { FormField, Input } from '../Form/Form'
 import { Badge } from '../Badge/Badge'

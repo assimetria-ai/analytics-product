@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import { Camera, Mail, User as UserIcon, Trash2 } from 'lucide-react'
-import { SettingsSection, SettingsRow } from './UserSettings'
+import { SettingsSection, SettingsRow } from './UserSettings.jsx'
 import { Button } from '../Button/Button'
 import { FormField, Input, Textarea } from '../Form/Form'
 import { Avatar } from '../Avatar/Avatar'
