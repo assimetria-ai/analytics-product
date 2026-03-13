@@ -156,9 +156,9 @@ export default {
   // ─── Module Rules ────────────────────────────────────────────────────────────
   module: {
     rules: [
-      // Disable fullySpecified for .js/.mjs so ESM files can import without extensions
+      // Disable fullySpecified for all source files so ESM files can import without extensions
       {
-        test: /\.m?js$/,
+        test: /\.[jt]sx?$/,
         resolve: {
           fullySpecified: false,
         },

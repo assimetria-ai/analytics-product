@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
-import { teamsApi } from '../../lib/@custom/teams'
+import { teamsApi } from '../../lib/@custom/teams.js'
 
 export function useTeamInvitations() {
   const [invitations, setInvitations] = useState([])

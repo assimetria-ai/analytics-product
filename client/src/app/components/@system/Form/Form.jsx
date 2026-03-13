@@ -2,6 +2,22 @@
 import { Label } from '@radix-ui/react-label'
 import { cn } from '@/app/lib/@system/utils'
 
+function Form({ onSubmit, className, children }) {
+  return (
+    <form onSubmit={onSubmit} className={cn('space-y-4', className)}>
+      {children}
+    </form>
+  )
+}
+
+function FormLabel({ htmlFor, className, children }) {
+  return (
+    <Label htmlFor={htmlFor} className={cn('text-sm font-medium leading-none', className)}>
+      {children}
+    </Label>
+  )
+}
+
 function FormField({ label, error, required, children, className }) {
   return (
     <div className={cn('space-y-2', className)}>
@@ -65,4 +81,7 @@ function Textarea({ className, error, ...props }) {
   )
 }
 
-export { FormField, Input, Textarea }
+const FormInput = Input
+const FormTextarea = Textarea
+
+export { Form, FormLabel, FormField, FormInput, FormTextarea, Input, Textarea }
