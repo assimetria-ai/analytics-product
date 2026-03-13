@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { X, Check, ChevronRight, Sparkles } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Card } from '../Card'
+import { Card } from '../Card/Card'
 
 export function WelcomeCard({
   user,

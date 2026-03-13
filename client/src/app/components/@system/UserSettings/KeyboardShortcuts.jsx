@@ -4,8 +4,8 @@
 import { useState } from 'react'
 import { Search, Command, X } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Card } from '../Card'
-import { Badge } from '../Badge'
+import { Card } from '../Card/Card'
+import { Badge } from '../Badge/Badge'
 
 const isMac = typeof window !== 'undefined' 
   ? navigator.platform.toUpperCase().indexOf('MAC') >= 0 

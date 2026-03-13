@@ -156,6 +156,14 @@ export default {
   // ─── Module Rules ────────────────────────────────────────────────────────────
   module: {
     rules: [
+      // Disable fullySpecified for JS/JSX — "type": "module" in package.json
+      // makes webpack require file extensions on every import. This rule relaxes
+      // that so existing extensionless imports (e.g. './Foo' → './Foo.jsx') work.
+      {
+        test: /\.m?jsx?$/,
+        resolve: { fullySpecified: false },
+      },
+
       // TypeScript / TSX / JSX
       {
         test: /\.[jt]sx?$/,

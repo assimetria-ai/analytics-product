@@ -6,7 +6,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X, ArrowRight, ArrowLeft } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Button } from '../Button'
+import { Button } from '../Button/Button'
 
 export function GuidedTour({
   steps = [],
