@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
+import { info } from '@/config/@system/info'
 
 
 const FAQ_ITEMS = [
@@ -76,7 +77,7 @@ export function FAQ() {
         <p className="mt-2 sm:mt-3 text-sm sm:text-base text-muted-foreground">
           Everything you need to know. Can't find the answer{' '}
           <a
-            href="mailto:support@example.com"
+            href={`mailto:${info.supportEmail}`}
             className="underline underline-offset-4 hover:text-primary"
           >
             Ask us directly.

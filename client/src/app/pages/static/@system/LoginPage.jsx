@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import { info } from '@/config/@system/info'
 import { Button } from '@/app/components/@system/ui/button'
 import { FormField, Input } from '@/app/components/@system/Form/Form'
 import { api } from '@/app/lib/@system/api'
@@ -47,7 +48,7 @@ export function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <Link to="/" className="text-xl font-bold text-foreground">
-            ProductTemplate
+            {info.name}
           </Link>
           <h1 className="mt-4 text-2xl font-semibold text-foreground">Sign in</h1>
           <p className="mt-1 text-sm text-muted-foreground">Enter your credentials to continue</p>

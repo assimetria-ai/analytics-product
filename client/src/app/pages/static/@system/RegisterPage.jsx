@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { info } from '../../../../config/@system/info'
 import { Button } from '../../../components/@system/ui/button'
 import { FormField, Input } from '../../../components/@system/Form/Form'
 import { api } from '../../../lib/@system/api'
@@ -82,7 +83,7 @@ export function RegisterPage() {
         {/* Heading */}
         <div className="mb-8 text-center">
           <Link to="/" className="text-xl font-bold text-foreground">
-            ProductTemplate
+            {info.name}
           </Link>
           <h1 className="mt-4 text-2xl font-semibold text-foreground">Create account</h1>
           <p className="mt-1 text-sm text-muted-foreground">Get started for free</p>

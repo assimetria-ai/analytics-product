@@ -1,7 +1,7 @@
 // @system — Landing page: hero + features + CTA + footer
 // @custom — to add custom sections (FAQ, HeroSection), create @custom/LandingPage.jsx that wraps or extends this
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check } from 'lucide-react'
+import { ArrowRight, Check, BarChart3, Activity, Shield, Zap, Globe, Bell } from 'lucide-react'
 import { Button } from '../../../components/@system/ui/button'
 import { Header } from '../../../components/@system/Header/Header'
 import { Footer } from '../../../components/@system/Footer/Footer'
@@ -15,7 +15,7 @@ const PLANS = [
     name: 'Starter',
     price: '$0',
     period: 'forever',
-    features: ['Up to 3 projects', 'Basic analytics', 'Community support'],
+    features: ['Up to 3 projects', '10k events/month', 'Real-time dashboards', 'Community support'],
     cta: 'Get Started Free',
     ctaLink: '/auth?tab=register',
     highlighted: false },
@@ -23,7 +23,7 @@ const PLANS = [
     name: 'Pro',
     price: '$29',
     period: '/month',
-    features: ['Unlimited projects', 'Advanced analytics', 'Priority support', 'Custom domain'],
+    features: ['Unlimited projects', '1M events/month', 'Error tracking', 'Smart alerts', 'Priority support'],
     cta: 'Start Free Trial',
     ctaLink: '/auth?tab=register',
     highlighted: true },
@@ -31,7 +31,7 @@ const PLANS = [
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    features: ['Everything in Pro', 'SLA guarantee', 'Dedicated support', 'On-premise option'],
+    features: ['Everything in Pro', 'Unlimited events', 'Self-hosted option', 'SLA guarantee', 'Dedicated support'],
     cta: 'Contact Sales',
     ctaLink: `mailto:${info.supportEmail}`,
     highlighted: false },
@@ -69,7 +69,18 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      <FeaturesSection />
+      <FeaturesSection
+        heading="Product analytics that just works"
+        subheading="Privacy-first analytics you can self-host. No third-party cookies, no guesswork."
+        features={[
+          { icon: BarChart3, title: 'Real-time Dashboards', description: 'Live metrics, funnels, and retention charts updated in real time — no waiting for batch jobs.' },
+          { icon: Activity, title: 'Event Tracking', description: 'Auto-capture clicks, page views, and custom events with a single script tag. No manual instrumentation.' },
+          { icon: Shield, title: 'Privacy-First', description: 'No third-party cookies. GDPR-compliant by default. Own your data on your own infrastructure.' },
+          { icon: Zap, title: 'Error Tracking', description: 'Sentry-like error monitoring built in. Stack traces, breadcrumbs, and alerts — zero extra cost.' },
+          { icon: Globe, title: 'Multi-Product Support', description: 'Track every app from one dashboard. Filter by project, environment, or team.' },
+          { icon: Bell, title: 'Smart Alerts', description: 'Get notified when metrics spike or drop. Slack, email, and webhook integrations included.' },
+        ]}
+      />
 
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
