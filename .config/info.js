@@ -1,23 +1,23 @@
 // Central product config — shared source of truth for both client and server
-// @system — do not modify this file directly; override values in config/@custom/
+// @custom — Analytics Product branding
 
 let GENERAL_INFO = {
-  name: 'ProductTemplate',
-  description: 'New SaaS Product built on the Assimetria template',
+  name: 'Analytics Product',
+  description: 'See everything. Miss nothing. Product analytics platform — privacy-first, zero setup, own your data.',
   cta: {
-    title: 'Start Today',
-    description: 'Join thousands of users transforming their workflow.',
+    title: 'Start Tracking',
+    description: 'Join teams who ship better products with data-driven insights.',
     buttonText: 'Get Started for Free',
   },
-  url: 'https://yourproduct.com',
-  email: 'general@yourproduct.com',
-  supportEmail: 'support@yourproduct.com',
+  url: 'https://analytics-product-production.up.railway.app',
+  email: 'support@assimetria.com',
+  supportEmail: 'support@assimetria.com',
   socials: [],
-  theme_color: '#6940f8',
+  theme_color: '#6b7280',
   background_color: '#f7f6fe',
   links: {
-    faq: 'https://support.yourproduct.com',
-    refer_and_earn: 'https://yourproduct.com/refer-and-earn',
+    faq: 'https://analytics-product-production.up.railway.app/docs',
+    refer_and_earn: 'https://analytics-product-production.up.railway.app/refer-and-earn',
   },
   products: {
     monthly: {
@@ -40,7 +40,7 @@ let GENERAL_INFO = {
       noAllowedRoutes: [],
     },
   ],
-  authMode: 'web2', // Options: 'web2' (email/password) or 'web3' (wallet)
+  authMode: 'web2',
 }
 
 module.exports = GENERAL_INFO

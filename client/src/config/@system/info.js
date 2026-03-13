@@ -1,5 +1,5 @@
 // @system — product identity config
-// Base defaults; @custom/info.js overrides per product
+// Base defaults; @custom/info.js overrides these per-product
 import { customInfo } from '../@custom/info'
 
 const defaults = {

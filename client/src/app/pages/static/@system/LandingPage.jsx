@@ -1,7 +1,7 @@
 // @system — Landing page: hero + features + CTA + footer
 // @custom — to add custom sections (FAQ, HeroSection), create @custom/LandingPage.jsx that wraps or extends this
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check, BarChart3, Activity, Shield, Zap, Globe, Bell } from 'lucide-react'
+import { ArrowRight, Check } from 'lucide-react'
 import { Button } from '../../../components/@system/ui/button'
 import { Header } from '../../../components/@system/Header/Header'
 import { Footer } from '../../../components/@system/Footer/Footer'
@@ -9,6 +9,7 @@ import { Card, CardContent } from '../../../components/@system/Card/Card'
 import { FeaturesSection } from '../../../components/@system/FeaturesSection'
 import { OgMeta } from '../../../components/@system/OgMeta/OgMeta'
 import { info } from '../../../../config/@system/info'
+import { ANALYTICS_FEATURES, FEATURES_HEADING, FEATURES_SUBHEADING } from '../../../../config/@custom/features'
 
 const PLANS = [
   {
@@ -40,9 +41,6 @@ const PLANS = [
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* @system — OG meta tags: title/description/image auto-filled from info config */}
-      {/* @custom — pass explicit props to override per-product:                        */}
-      {/*   <OgMeta title="MyProduct" description="..." image="https://.../og.png" />   */}
       <OgMeta
         title={info.name}
         description={info.tagline}
@@ -51,7 +49,6 @@ export function LandingPage() {
       <Header />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      {/* @custom — to add a custom hero, create @custom/LandingPage.jsx that includes your HeroSection */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
           {info.tagline}
@@ -69,18 +66,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      <FeaturesSection
-        heading="Product analytics that just works"
-        subheading="Privacy-first analytics you can self-host. No third-party cookies, no guesswork."
-        features={[
-          { icon: BarChart3, title: 'Real-time Dashboards', description: 'Live metrics, funnels, and retention charts updated in real time — no waiting for batch jobs.' },
-          { icon: Activity, title: 'Event Tracking', description: 'Auto-capture clicks, page views, and custom events with a single script tag. No manual instrumentation.' },
-          { icon: Shield, title: 'Privacy-First', description: 'No third-party cookies. GDPR-compliant by default. Own your data on your own infrastructure.' },
-          { icon: Zap, title: 'Error Tracking', description: 'Sentry-like error monitoring built in. Stack traces, breadcrumbs, and alerts — zero extra cost.' },
-          { icon: Globe, title: 'Multi-Product Support', description: 'Track every app from one dashboard. Filter by project, environment, or team.' },
-          { icon: Bell, title: 'Smart Alerts', description: 'Get notified when metrics spike or drop. Slack, email, and webhook integrations included.' },
-        ]}
-      />
+      <FeaturesSection features={ANALYTICS_FEATURES} heading={FEATURES_HEADING} subheading={FEATURES_SUBHEADING} />
 
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
