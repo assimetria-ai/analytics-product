@@ -1,12 +1,12 @@
 // Central product config — shared source of truth for both client and server
-// @custom — Analytics Product branding
+// @system — do not modify this file directly; override values in config/@custom/
 
 let GENERAL_INFO = {
   name: 'Analytics Product',
-  description: 'See everything. Miss nothing. Product analytics platform — privacy-first, zero setup, own your data.',
+  description: 'See everything. Miss nothing. Privacy-first product analytics for SaaS founders.',
   cta: {
-    title: 'Start Tracking',
-    description: 'Join teams who ship better products with data-driven insights.',
+    title: 'Start Tracking Today',
+    description: 'Join SaaS founders who own their analytics data.',
     buttonText: 'Get Started for Free',
   },
   url: 'https://analytics-product-production.up.railway.app',
@@ -40,7 +40,7 @@ let GENERAL_INFO = {
       noAllowedRoutes: [],
     },
   ],
-  authMode: 'web2',
+  authMode: 'web2', // Options: 'web2' (email/password) or 'web3' (wallet)
 }
 
 module.exports = GENERAL_INFO

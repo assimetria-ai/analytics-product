@@ -9,6 +9,7 @@ import { Button } from '../../../components/@system/ui/button'
 import { FormField, Input } from '../../../components/@system/Form/Form'
 import { api } from '../../../lib/@system/api'
 import { useAuthContext } from '../../../store/@system/auth'
+import { info } from '../../../../config/@system/info'
 import { OAuthButtons } from '../../../components/@system/OAuthButtons/OAuthButtons'
 
 // @custom — to add password strength indicator, create @custom/RegisterPage.jsx that wraps or extends this
