@@ -7,6 +7,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "migrate": "node src/db/migrations/@system/run.js",
+    "migrate:custom": "node src/db/migrate.js",
     "migrate:status": "node src/db/migrations/@system/run.js --status",
     "migrate:dry": "node src/db/migrations/@system/run.js --dry-run",
     "migrate:rollback": "node src/db/migrations/@system/run.js --rollback",

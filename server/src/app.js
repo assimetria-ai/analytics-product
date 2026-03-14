@@ -25,6 +25,14 @@ app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/healthz', (_req, res) => res.status(200).json({ status: 'ok' }))
 
+// Serve the embed tracking script publicly at /embed.js (no auth, cache 1h)
+const TRACKER_PATH = path.join(__dirname, '..', '..', '@custom', 'embed', 'tracker.js')
+app.get('/embed.js', (_req, res) => {
+  res.set('Content-Type', 'application/javascript')
+  res.set('Cache-Control', 'public, max-age=3600')
+  res.sendFile(TRACKER_PATH)
+})
+
 app.use(securityHeaders)
 // CORS only for API routes — static files and SPA catch-all must be accessible
 // via direct browser navigation (no Origin header). Previously applied globally,
