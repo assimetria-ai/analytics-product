@@ -75,11 +75,12 @@ See the **Embed Setup** page in the app (`/app/embed`) for a full guide with you
 |------|------|
 | `/app/dashboard` | Analytics Dashboard (overview, charts, stats) |
 | `/app/analytics` | Detailed Analytics (top pages, referrers, UTM, geo) |
+| `/app/events` | Event Stream (auto-captured + custom events) |
 | `/app/funnels` | Conversion Funnels |
 | `/app/sessions` | User Sessions & Heatmaps |
 | `/app/errors` | Error Tracking |
 | `/app/embed` | Embed Setup Guide |
-| `/app/api-keys` | API Key Management |
+| `/app/api-access` | API Key Management, Webhooks & REST Docs |
 
 ---
 

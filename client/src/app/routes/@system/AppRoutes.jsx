@@ -127,6 +127,12 @@ const ErrorTrackingPage = lazy(() =>
 const EmbedSetupPage = lazy(() =>
   import('../../pages/app/@custom/EmbedSetupPage').then((m) => ({ default: m.EmbedSetupPage }))
 )
+const EventsPage = lazy(() =>
+  import('../../pages/app/@custom/EventsPage').then((m) => ({ default: m.EventsPage }))
+)
+const ApiAccessPage = lazy(() =>
+  import('../../pages/app/@custom/ApiAccessPage').then((m) => ({ default: m.ApiAccessPage }))
+)
 
 function PageFallback() {
   return (
@@ -258,6 +264,22 @@ export function AppRoutes() {
           element={
             <ProtectedRoute>
               <EmbedSetupPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/events"
+          element={
+            <ProtectedRoute>
+              <EventsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/api-access"
+          element={
+            <ProtectedRoute>
+              <ApiAccessPage />
             </ProtectedRoute>
           }
         />

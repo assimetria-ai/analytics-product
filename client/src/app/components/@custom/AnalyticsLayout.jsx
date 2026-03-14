@@ -9,6 +9,8 @@ import {
   Bug,
   Code2,
   Key,
+  Zap,
+  KeyRound,
   Menu,
 } from 'lucide-react'
 import { Sidebar, SidebarLogo, SidebarSection, SidebarItem } from '../@system/Sidebar/Sidebar'
@@ -18,11 +20,12 @@ import { cn } from '@/app/lib/@system/utils'
 const NAV_ITEMS = [
   { icon: LayoutDashboard, label: 'Dashboard', to: '/app/dashboard' },
   { icon: BarChart3, label: 'Analytics', to: '/app/analytics' },
+  { icon: Zap, label: 'Events', to: '/app/events' },
   { icon: Filter, label: 'Funnels', to: '/app/funnels' },
   { icon: Users, label: 'Sessions', to: '/app/sessions' },
   { icon: Bug, label: 'Errors', to: '/app/errors' },
   { icon: Code2, label: 'Embed Setup', to: '/app/embed' },
-  { icon: Key, label: 'API Keys', to: '/app/api-keys' },
+  { icon: KeyRound, label: 'API Access', to: '/app/api-access' },
 ]
 
 /**
