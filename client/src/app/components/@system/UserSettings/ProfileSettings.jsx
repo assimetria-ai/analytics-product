@@ -3,9 +3,9 @@
 
 import { useState } from 'react'
 import { Camera, Mail, User as UserIcon, Trash2 } from 'lucide-react'
-import { SettingsSection, SettingsRow } from './UserSettings.jsx'
+import { SettingsSection, SettingsRow } from './UserSettings'
 import { Button } from '../Button/Button'
-import { FormField, Input, Textarea } from '../Form/Form'
+import { Form, FormField, FormLabel, FormInput, FormTextarea } from '../Form/Form'
 import { Avatar } from '../Avatar/Avatar'
 import { cn } from '@/app/lib/@system/utils'
 
@@ -50,10 +50,10 @@ export function ProfileSettings({ user, onUpdate }) {
         title="Public profile"
         description="This information will be visible to other users"
       >
-        <form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit}>
           {/* Avatar upload */}
           <div className="mb-6">
-            <label htmlFor="avatar" className="text-sm font-medium">Profile picture</label>
+            <FormLabel htmlFor="avatar">Profile picture</FormLabel>
             <div className="flex items-center gap-4 mt-2">
               <Avatar
                 src={formData.avatar}
@@ -93,8 +93,9 @@ export function ProfileSettings({ user, onUpdate }) {
           </div>
 
           {/* Name */}
-          <FormField label="Full name">
-            <Input
+          <FormField>
+            <FormLabel htmlFor="name">Full name</FormLabel>
+            <FormInput
               id="name"
               type="text"
               value={formData.name}
@@ -105,15 +106,16 @@ export function ProfileSettings({ user, onUpdate }) {
           </FormField>
 
           {/* Email */}
-          <FormField label="Email address">
-            <Input
+          <FormField>
+            <FormLabel htmlFor="email">Email address</FormLabel>
+            <FormInput
               id="email"
               type="email"
               value={formData.email}
               onChange={handleChange('email')}
               placeholder="john@example.com"
               required
-              disabled
+              disabled // Usually can't change email directly
             />
             <p className="text-xs text-muted-foreground mt-1">
               Contact support to change your email address
@@ -121,8 +123,9 @@ export function ProfileSettings({ user, onUpdate }) {
           </FormField>
 
           {/* Bio */}
-          <FormField label="Bio">
-            <Textarea
+          <FormField>
+            <FormLabel htmlFor="bio">Bio</FormLabel>
+            <FormTextarea
               id="bio"
               value={formData.bio}
               onChange={handleChange('bio')}
@@ -152,7 +155,7 @@ export function ProfileSettings({ user, onUpdate }) {
               Save changes
             </Button>
           </div>
-        </form>
+        </Form>
       </SettingsSection>
 
       {/* Danger zone */}
@@ -178,3 +181,38 @@ export function ProfileSettings({ user, onUpdate }) {
   )
 }
 
+// Simple Avatar component (if not exists in @system)
+function Avatar({ src, alt, size = 'md', fallback, className }) {
+  const sizes = {
+    sm: 'h-8 w-8 text-xs',
+    md: 'h-10 w-10 text-sm',
+    lg: 'h-16 w-16 text-lg',
+  }
+
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          'flex items-center justify-center rounded-full bg-primary/10 text-primary font-medium',
+          sizes[size],
+          className
+        )}
+      >
+        {fallback || <UserIcon className="h-1/2 w-1/2" />}
+      </div>
+    )
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={cn(
+        'rounded-full object-cover',
+        sizes[size],
+        className
+      )}
+      loading="lazy"
+    />
+  )
+}

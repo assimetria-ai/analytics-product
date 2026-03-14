@@ -1,27 +1,44 @@
 {
   "compilerOptions": {
+    /* ─── Language & Environment ──────────────────────────────────────── */
     "target": "ES2020",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
+
+    /* ─── Module Resolution ──────────────────────────────────────────── */
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "allowJs": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": false,
+
+    /* ─── Path Aliases (mirrors webpack resolve.alias) ───────────────── */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@system/*": ["./src/@system/*"],
-      "@custom/*": ["./src/@custom/*"]
+      "@/*": ["src/*"]
     },
-    "types": ["node"]
+
+    /* ─── Type Checking ──────────────────────────────────────────────── */
+    "strict": false,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+
+    /* ─── JavaScript Support (for mixed JS/TS codebase) ──────────────── */
+    "allowJs": true,
+    "checkJs": false
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.js",
+    "src/**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
 }

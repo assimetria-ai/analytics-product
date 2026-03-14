@@ -18,7 +18,8 @@
     "test:e2e:headed": "npx playwright test --headed",
     "test:e2e:report": "npx playwright show-report",
     "test:client": "cd client && npm run test:run",
-    "test:coverage": "cd client && npm run test:coverage"
+    "test:coverage": "cd client && npm run test:coverage",
+    "typecheck": "cd client && npm run typecheck && cd ../server && npm run typecheck"
   },
   "dependencies": {
     "node-forge": "^1.3.1"

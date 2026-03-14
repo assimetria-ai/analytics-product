@@ -5,8 +5,8 @@
 import { useState } from 'react'
 import { Search, X, Filter, Calendar, ChevronDown } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Button } from '../Button/Button'
-import { Badge } from '../Badge/Badge'
+import { Button } from '../Button'
+import { Badge } from '../Badge'
 
 export function FiltersBar({
   searchValue = '',

@@ -5,9 +5,9 @@
 import { useState } from 'react'
 import { Download, FileText, Table, FileJson, Check, AlertCircle } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Card } from '../Card/Card'
-import { Button } from '../Button/Button'
-import { Alert } from '../Alert/Alert'
+import { Card } from '../Card'
+import { Button } from '../Button'
+import { Alert } from '../Alert'
 
 const EXPORT_FORMATS = [
   {

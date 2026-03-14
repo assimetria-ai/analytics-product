@@ -23,7 +23,7 @@ concurrency:
 jobs:
   # ── Client: lint, type-check, build ───────────────────────────────────────
   client-ci:
-    name: Client (React/Vite)
+    name: Client (React/Webpack)
     runs-on: ubuntu-latest
 
     defaults:
@@ -45,13 +45,18 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Type-check
-        run: npx tsc --noEmit
+      - name: Type-check (TypeScript)
+        run: npm run typecheck
+
+      - name: Validate tsconfig.json exists
+        run: |
+          if [ ! -f tsconfig.json ]; then
+            echo "::error::tsconfig.json is missing in client/ — TypeScript setup is broken"
+            exit 1
+          fi
 
       - name: Build
         run: npm run build
-        env:
-          VITE_API_URL: /api
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -147,4 +152,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            VITE_API_URL=/api
+            NODE_ENV=production

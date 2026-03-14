@@ -1,1 +1,1 @@
-export { HelpWidget } from './HelpWidget.jsx'
+export { HelpWidget } from './HelpWidget'

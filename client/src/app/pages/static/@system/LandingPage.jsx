@@ -9,14 +9,13 @@ import { Card, CardContent } from '../../../components/@system/Card/Card'
 import { FeaturesSection } from '../../../components/@system/FeaturesSection'
 import { OgMeta } from '../../../components/@system/OgMeta/OgMeta'
 import { info } from '../../../../config/@system/info'
-import { ANALYTICS_FEATURES, FEATURES_HEADING, FEATURES_SUBHEADING } from '../../../../config/@custom/features'
 
 const PLANS = [
   {
     name: 'Starter',
     price: '$0',
     period: 'forever',
-    features: ['Up to 3 projects', '10k events/month', 'Real-time dashboards', 'Community support'],
+    features: ['Up to 3 projects', 'Basic analytics', 'Community support'],
     cta: 'Get Started Free',
     ctaLink: '/auth?tab=register',
     highlighted: false },
@@ -24,7 +23,7 @@ const PLANS = [
     name: 'Pro',
     price: '$29',
     period: '/month',
-    features: ['Unlimited projects', '1M events/month', 'Error tracking', 'Smart alerts', 'Priority support'],
+    features: ['Unlimited projects', 'Advanced analytics', 'Priority support', 'Custom domain'],
     cta: 'Start Free Trial',
     ctaLink: '/auth?tab=register',
     highlighted: true },
@@ -32,7 +31,7 @@ const PLANS = [
     name: 'Enterprise',
     price: 'Custom',
     period: '',
-    features: ['Everything in Pro', 'Unlimited events', 'Self-hosted option', 'SLA guarantee', 'Dedicated support'],
+    features: ['Everything in Pro', 'SLA guarantee', 'Dedicated support', 'On-premise option'],
     cta: 'Contact Sales',
     ctaLink: `mailto:${info.supportEmail}`,
     highlighted: false },
@@ -41,6 +40,9 @@ const PLANS = [
 export function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* @system — OG meta tags: title/description/image auto-filled from info config */}
+      {/* @custom — pass explicit props to override per-product:                        */}
+      {/*   <OgMeta title="MyProduct" description="..." image="https://.../og.png" />   */}
       <OgMeta
         title={info.name}
         description={info.tagline}
@@ -49,6 +51,7 @@ export function LandingPage() {
       <Header />
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      {/* @custom — to add a custom hero, create @custom/LandingPage.jsx that includes your HeroSection */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20 text-center">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight">
           {info.tagline}
@@ -66,7 +69,7 @@ export function LandingPage() {
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      <FeaturesSection features={ANALYTICS_FEATURES} heading={FEATURES_HEADING} subheading={FEATURES_SUBHEADING} />
+      <FeaturesSection />
 
       {/* ── Pricing ──────────────────────────────────────────────────────── */}
       <section className="container mx-auto px-4 py-12 sm:py-16 md:py-20">

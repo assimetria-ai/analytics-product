@@ -60,7 +60,8 @@ const SCHEMA = [
   {
     key: 'REDIS_URL',
     required: false,
-    description: 'Redis connection URL  e.g. redis://localhost:6379 (no default — omit to disable Redis)',
+    default: 'redis://localhost:6379',
+    description: 'Redis connection URL  e.g. redis://localhost:6379',
   },
 
   // ── Auth (RS256 asymmetric key pair) ─────────────────────────────────────
