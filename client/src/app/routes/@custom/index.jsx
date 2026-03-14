@@ -1,4 +1,5 @@
 import { Route } from 'react-router-dom'
+import { DashboardPage } from '../../pages/app/@custom/DashboardPage'
 import { ErrorTrackingPage } from '../../pages/app/@custom/ErrorTrackingPage'
 import { CollaboratorsPage } from '../../pages/app/@custom/CollaboratorsPage'
 import { BrandSettingsPage } from '../../pages/app/@custom/BrandSettingsPage'
@@ -13,6 +14,15 @@ import { PrivateRoute } from '@/app/components/@system/PrivateRoute/PrivateRoute
 // @custom — add your product-specific routes here.
 // Wrap with <PrivateRoute> for authenticated pages.
 export const customRoutes = [
+  <Route
+    key="dashboard"
+    path="/app/dashboard"
+    element={
+      <PrivateRoute>
+        <DashboardPage />
+      </PrivateRoute>
+    }
+  />,
   <Route
     key="error-tracking"
     path="/app/errors"
