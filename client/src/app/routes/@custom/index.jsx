@@ -12,6 +12,9 @@ import { EmailPreviewPage } from '../../pages/app/@custom/EmailPreviewPage'
 import { ClipLibraryPage } from '../../pages/app/@custom/ClipLibraryPage'
 import { TeamsPage } from '../../pages/app/@custom/TeamsPage'
 import { TeamDetailPage } from '../../pages/app/@custom/TeamDetailPage'
+import { EventsPage } from '../../pages/app/@custom/EventsPage'
+import { EmbedScriptPage } from '../../pages/app/@custom/EmbedScriptPage'
+import ApiAccessPage from '../../pages/app/@custom/ApiAccessPage'
 import { PrivateRoute } from '@/app/components/@system/PrivateRoute/PrivateRoute'
 
 // @custom — add your product-specific routes here.
@@ -131,6 +134,33 @@ export const customRoutes = [
     element={
       <PrivateRoute>
         <TeamDetailPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="events"
+    path="/app/events"
+    element={
+      <PrivateRoute>
+        <EventsPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="embed"
+    path="/app/embed"
+    element={
+      <PrivateRoute>
+        <EmbedScriptPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="api-access"
+    path="/app/api-access"
+    element={
+      <PrivateRoute>
+        <ApiAccessPage />
       </PrivateRoute>
     }
   />,
