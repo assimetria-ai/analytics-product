@@ -22,10 +22,10 @@ function isOriginAllowed(origin) {
 
 const corsOptions = {
   origin(origin, callback) {
-    if (isOriginAllowed(origin)) {
+    if (!origin || isOriginAllowed(origin)) {
       callback(null, true)
     } else {
-      callback(new Error(`CORS: origin '${origin}' not allowed`))
+      callback(null, false)
     }
   },
   credentials: true,
