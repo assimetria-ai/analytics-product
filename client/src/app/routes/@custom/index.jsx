@@ -1,5 +1,8 @@
 import { Route } from 'react-router-dom'
 import { DashboardPage } from '../../pages/app/@custom/DashboardPage'
+import { AnalyticsDashboardPage } from '../../pages/app/@custom/AnalyticsDashboardPage'
+import { FunnelsPage } from '../../pages/app/@custom/FunnelsPage'
+import { UserSessionsPage } from '../../pages/app/@custom/UserSessionsPage'
 import { ErrorTrackingPage } from '../../pages/app/@custom/ErrorTrackingPage'
 import { CollaboratorsPage } from '../../pages/app/@custom/CollaboratorsPage'
 import { BrandSettingsPage } from '../../pages/app/@custom/BrandSettingsPage'
@@ -20,6 +23,33 @@ export const customRoutes = [
     element={
       <PrivateRoute>
         <DashboardPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="analytics-overview"
+    path="/app/analytics"
+    element={
+      <PrivateRoute>
+        <AnalyticsDashboardPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="funnels"
+    path="/app/funnels"
+    element={
+      <PrivateRoute>
+        <FunnelsPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
+    key="user-sessions"
+    path="/app/sessions"
+    element={
+      <PrivateRoute>
+        <UserSessionsPage />
       </PrivateRoute>
     }
   />,
