@@ -9,7 +9,7 @@ import {
   TrendingDown,
 } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { PageLayout } from '../../../components/@system/layout/PageLayout'
+import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
@@ -149,7 +149,7 @@ export function FunnelsPage() {
   const funnel = MOCK_FUNNELS.find(f => f.id === selectedFunnel)
 
   return (
-    <PageLayout>
+    <AnalyticsLayout>
       <Header title="Funnels" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -229,6 +229,6 @@ export function FunnelsPage() {
           )}
         </div>
       </div>
-    </PageLayout>
+    </AnalyticsLayout>
   )
 }

@@ -17,4 +17,11 @@ router.use(require('../../api/@custom/clips'))
 router.use(require('../../api/@custom/teams'))
 router.use(require('../../api/@custom/links'))
 
+// Analytics-specific routes (Phase 9)
+router.use(require('../../api/@custom/analytics'))
+router.use(require('../../api/@custom/events'))
+router.use(require('../../api/@custom/funnels'))
+router.use(require('../../api/@custom/sessions'))
+router.use(require('../../api/@custom/embed'))
+
 module.exports = router

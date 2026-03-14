@@ -1,25 +1,89 @@
-# Product Template
+# Analytics Product
 
-**Assimetria's foundational scaffold for spinning up new products**
+**See everything. Miss nothing.**
 
-> Internal tooling for Assimetria agents and operators. This template provides a consistent, production-ready foundation for building SaaS products within the Assimetria OS ecosystem.
-
----
-
-## Purpose
-
-The Product Template is the starting point for all Assimetria products. It solves the "blank slate problem" by providing:
-
-1. **Consistent architecture** — All products share the same structure, making agent handoffs seamless
-2. **Battle-tested patterns** — Auth, database, payments, and deployment are solved once, reused everywhere
-3. **Fast iteration** — Bootstrap a new product in minutes, not days
-4. **Maintainability** — Template updates (`@system`) propagate to all products via sync workflow
-
-**Not a framework.** This is a scaffold — fork it, customize it, ship it.
+> A PostHog-like analytics SaaS — open, self-hostable, and privacy-first. Track visitors, analyse funnels, replay sessions, and monitor errors across all your products in one place.
 
 ---
 
-## What's Included
+## What is This?
+
+Analytics Product is a full-featured web analytics platform built on the Assimetria product scaffold. It gives you:
+
+- **Real-time visitor tracking** — pageviews, sessions, bounce rate, avg. duration
+- **Funnel analysis** — visualise drop-off at each step of your user journey
+- **Session replay & heatmaps** — watch user journeys and see where they click
+- **Error tracking** — capture, triage, and resolve application errors (Sentry-like)
+- **Embed tracker** — a tiny `<script>` snippet you drop into any site
+- **API keys** — send events from backend services or CI pipelines
+
+**Tagline:** See everything. Miss nothing.
+
+---
+
+## Quick Start
+
+```bash
+# 1. Install dependencies
+cd client && npm install
+cd ../server && npm install
+
+# 2. Copy environment variables
+cp server/.env.example server/.env
+# Fill in DATABASE_URL, JWT_SECRET, etc.
+
+# 3. Run database migrations
+cd server && npm run migrate
+
+# 4. Start development servers
+npm run dev        # from root — starts both client (Vite) and server (Express)
+```
+
+Open [http://localhost:5173](http://localhost:5173) and register an account. You'll land on the analytics dashboard.
+
+---
+
+## Embedding the Tracker
+
+Add this snippet to the `<head>` of any site you want to track:
+
+```html
+<script>
+  (function(a,n,l,y,t,i,c,s){
+    a[t]=a[t]||function(){(a[t].q=a[t].q||[]).push(arguments)};
+    i=n.createElement(l);i.async=1;i.src=y;
+    c=n.getElementsByTagName(l)[0];c.parentNode.insertBefore(i,c);
+  })(window,document,'script','https://your-domain.com/embed.js','analytics');
+  analytics('init', 'YOUR_SITE_ID');
+</script>
+```
+
+Track custom events:
+
+```js
+analytics('track', 'button_clicked', { label: 'Get Started' })
+analytics('track', 'purchase', { amount: 49, currency: 'USD' })
+```
+
+See the **Embed Setup** page in the app (`/app/embed`) for a full guide with your site ID pre-filled.
+
+---
+
+## App Routes
+
+| Path | Page |
+|------|------|
+| `/app/dashboard` | Analytics Dashboard (overview, charts, stats) |
+| `/app/analytics` | Detailed Analytics (top pages, referrers, UTM, geo) |
+| `/app/funnels` | Conversion Funnels |
+| `/app/sessions` | User Sessions & Heatmaps |
+| `/app/errors` | Error Tracking |
+| `/app/embed` | Embed Setup Guide |
+| `/app/api-keys` | API Key Management |
+
+---
+
+## Tech Stack & What's Included
 
 ### Frontend (React + Vite)
 

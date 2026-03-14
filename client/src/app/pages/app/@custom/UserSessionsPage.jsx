@@ -14,7 +14,7 @@ import {
   MapPin,
 } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { PageLayout } from '../../../components/@system/layout/PageLayout'
+import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
 
 // ─── Mock Data ───────────────────────────────────────────────────────────────
@@ -241,7 +241,7 @@ export function UserSessionsPage() {
   const session = MOCK_SESSIONS.find(s => s.id === selectedSession)
 
   return (
-    <PageLayout>
+    <AnalyticsLayout>
       <Header title="User Sessions" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -378,6 +378,6 @@ export function UserSessionsPage() {
           </div>
         )}
       </div>
-    </PageLayout>
+    </AnalyticsLayout>
   )
 }

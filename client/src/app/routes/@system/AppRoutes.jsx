@@ -108,6 +108,26 @@ const TeamDetailPage = lazy(() =>
   import('../../pages/app/TeamDetailPage').then((m) => ({ default: m.TeamDetailPage }))
 )
 
+// @custom — Analytics product pages
+const DashboardPage = lazy(() =>
+  import('../../pages/app/@custom/DashboardPage').then((m) => ({ default: m.DashboardPage }))
+)
+const AnalyticsDashboardPage = lazy(() =>
+  import('../../pages/app/@custom/AnalyticsDashboardPage').then((m) => ({ default: m.AnalyticsDashboardPage }))
+)
+const FunnelsPage = lazy(() =>
+  import('../../pages/app/@custom/FunnelsPage').then((m) => ({ default: m.FunnelsPage }))
+)
+const UserSessionsPage = lazy(() =>
+  import('../../pages/app/@custom/UserSessionsPage').then((m) => ({ default: m.UserSessionsPage }))
+)
+const ErrorTrackingPage = lazy(() =>
+  import('../../pages/app/@custom/ErrorTrackingPage').then((m) => ({ default: m.ErrorTrackingPage }))
+)
+const EmbedSetupPage = lazy(() =>
+  import('../../pages/app/@custom/EmbedSetupPage').then((m) => ({ default: m.EmbedSetupPage }))
+)
+
 function PageFallback() {
   return (
     <div className="flex h-screen items-center justify-center">
@@ -189,12 +209,55 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<Navigate to="/app" replace />} />
         <Route path="/dashboard/*" element={<Navigate to="/app" replace />} />
 
-        {/* App (authenticated) */}
+        {/* App root — redirect to analytics dashboard */}
+        <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
+
+        {/* @custom — Analytics product routes */}
         <Route
-          path="/app"
+          path="/app/dashboard"
           element={
             <ProtectedRoute>
-              <HomePage />
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/analytics"
+          element={
+            <ProtectedRoute>
+              <AnalyticsDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/funnels"
+          element={
+            <ProtectedRoute>
+              <FunnelsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/sessions"
+          element={
+            <ProtectedRoute>
+              <UserSessionsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/errors"
+          element={
+            <ProtectedRoute>
+              <ErrorTrackingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/embed"
+          element={
+            <ProtectedRoute>
+              <EmbedSetupPage />
             </ProtectedRoute>
           }
         />

@@ -18,7 +18,7 @@ import {
   ExternalLink,
 } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { PageLayout } from '../../../components/@system/layout/PageLayout'
+import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
 import { api } from '../../../lib/@system/api'
 
@@ -372,7 +372,7 @@ export function DashboardPage() {
   }, [])
 
   return (
-    <PageLayout>
+    <AnalyticsLayout>
       <Header />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* Header Row */}
@@ -504,6 +504,6 @@ export function DashboardPage() {
           </div>
         )}
       </div>
-    </PageLayout>
+    </AnalyticsLayout>
   )
 }

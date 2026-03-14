@@ -1,28 +1,45 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   BarChart3,
-  TrendingUp,
   TrendingDown,
   Users,
   Eye,
   Clock,
   MousePointerClick,
-  Globe,
   ArrowUpRight,
   ArrowDownRight,
   Calendar,
   RefreshCw,
-  Download,
-  Filter,
   ChevronDown,
 } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { PageLayout } from '../../../components/@system/layout/PageLayout'
+import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
+import { api } from '../../../lib/@system/api'
 
-// ─── Mock Data ───────────────────────────────────────────────────────────────
+// ─── Date Range Presets ──────────────────────────────────────────────────────
 
-function generateDailyData(days = 30) {
+const DATE_RANGES = [
+  { label: 'Today', value: 'today' },
+  { label: 'Last 7 days', value: '7d' },
+  { label: 'Last 30 days', value: '30d' },
+  { label: 'Last 90 days', value: '90d' },
+  { label: 'This month', value: 'month' },
+  { label: 'Last month', value: 'last-month' },
+]
+
+const RANGE_LABEL_MAP = {
+  today: 'Today',
+  '7d': 'Last 7 days',
+  '30d': 'Last 30 days',
+  '90d': 'Last 90 days',
+  month: 'This month',
+  'last-month': 'Last month',
+}
+
+// ─── Mock Data Fallback ───────────────────────────────────────────────────────
+
+function generateMockDailyData(days = 30) {
   const data = []
   const now = new Date()
   for (let i = days - 1; i >= 0; i--) {
@@ -41,17 +58,12 @@ function generateDailyData(days = 30) {
   return data
 }
 
-const MOCK_DAILY = generateDailyData(30)
-
 const MOCK_TOP_PAGES = [
   { path: '/', title: 'Home', views: 4823, unique: 3201, avgTime: '1m 24s' },
   { path: '/pricing', title: 'Pricing', views: 2341, unique: 1899, avgTime: '2m 10s' },
   { path: '/docs', title: 'Documentation', views: 1987, unique: 1456, avgTime: '3m 45s' },
   { path: '/blog', title: 'Blog', views: 1654, unique: 1321, avgTime: '2m 33s' },
   { path: '/signup', title: 'Sign Up', views: 1201, unique: 1105, avgTime: '0m 58s' },
-  { path: '/features', title: 'Features', views: 987, unique: 802, avgTime: '1m 47s' },
-  { path: '/login', title: 'Login', views: 876, unique: 654, avgTime: '0m 32s' },
-  { path: '/about', title: 'About', views: 543, unique: 432, avgTime: '1m 15s' },
 ]
 
 const MOCK_REFERRERS = [
@@ -59,18 +71,11 @@ const MOCK_REFERRERS = [
   { source: 'Direct', visitors: 2890, pct: 28.6 },
   { source: 'Twitter / X', visitors: 1234, pct: 12.2 },
   { source: 'GitHub', visitors: 987, pct: 9.8 },
-  { source: 'Hacker News', visitors: 654, pct: 6.5 },
-  { source: 'Reddit', visitors: 432, pct: 4.3 },
-  { source: 'LinkedIn', visitors: 234, pct: 2.3 },
-  { source: 'Other', visitors: 213, pct: 2.1 },
 ]
 
 const MOCK_UTM = [
   { campaign: 'spring-launch', source: 'twitter', medium: 'social', visitors: 1234, conversions: 89 },
   { campaign: 'blog-seo', source: 'google', medium: 'organic', visitors: 987, conversions: 67 },
-  { campaign: 'newsletter-march', source: 'email', medium: 'email', visitors: 654, conversions: 112 },
-  { campaign: 'producthunt', source: 'producthunt', medium: 'referral', visitors: 543, conversions: 45 },
-  { campaign: 'hn-post', source: 'hackernews', medium: 'referral', visitors: 321, conversions: 23 },
 ]
 
 const MOCK_GEO = [
@@ -78,20 +83,12 @@ const MOCK_GEO = [
   { country: 'United Kingdom', code: 'GB', visitors: 1456, pct: 14.4 },
   { country: 'Germany', code: 'DE', visitors: 987, pct: 9.8 },
   { country: 'France', code: 'FR', visitors: 654, pct: 6.5 },
-  { country: 'Canada', code: 'CA', visitors: 543, pct: 5.4 },
-  { country: 'Netherlands', code: 'NL', visitors: 432, pct: 4.3 },
-  { country: 'Brazil', code: 'BR', visitors: 387, pct: 3.8 },
-  { country: 'India', code: 'IN', visitors: 354, pct: 3.5 },
-  { country: 'Australia', code: 'AU', visitors: 298, pct: 3.0 },
-  { country: 'Japan', code: 'JP', visitors: 234, pct: 2.3 },
 ]
-
-const DATE_RANGES = ['Today', 'Last 7 days', 'Last 30 days', 'Last 90 days', 'This month', 'Last month']
 
 // ─── Components ──────────────────────────────────────────────────────────────
 
-function MetricCard({ icon: Icon, label, value, change, changeLabel }) {
-  const isPositive = change >= 0
+function MetricCard({ icon: Icon, label, value, change }) {
+  const isPositive = !change || change >= 0
   return (
     <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 hover:shadow-sm transition-shadow">
       <div className="flex items-center justify-between mb-3">
@@ -103,36 +100,36 @@ function MetricCard({ icon: Icon, label, value, change, changeLabel }) {
       <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
-      <div className="flex items-center gap-1 text-xs">
-        {isPositive ? (
-          <ArrowUpRight className="w-3 h-3 text-emerald-500" />
-        ) : (
-          <ArrowDownRight className="w-3 h-3 text-red-500" />
-        )}
-        <span className={isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
-          {isPositive ? '+' : ''}{change}%
-        </span>
-        <span className="text-gray-400 dark:text-gray-500 ml-1">{changeLabel || 'vs previous period'}</span>
-      </div>
+      {change != null && (
+        <div className="flex items-center gap-1 text-xs">
+          {isPositive ? (
+            <ArrowUpRight className="w-3 h-3 text-emerald-500" />
+          ) : (
+            <ArrowDownRight className="w-3 h-3 text-red-500" />
+          )}
+          <span className={isPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
+            {isPositive ? '+' : ''}{change?.toFixed(1)}%
+          </span>
+          <span className="text-gray-400 dark:text-gray-500 ml-1">vs previous period</span>
+        </div>
+      )}
     </div>
   )
 }
 
 function MiniBarChart({ data, dataKey, height = 120, color = '#6b7280' }) {
-  const max = Math.max(...data.map(d => d[dataKey]))
-  const barWidth = Math.max(4, Math.floor((100 / data.length) * 0.7))
-  const gap = Math.max(1, Math.floor((100 / data.length) * 0.3))
-
+  if (!data || data.length === 0) return <div style={{ height }} className="flex items-center justify-center text-sm text-gray-400">No data</div>
+  const max = Math.max(...data.map(d => d[dataKey] || 0), 1)
   return (
     <div className="flex items-end gap-px" style={{ height }}>
       {data.map((d, i) => {
-        const h = max > 0 ? (d[dataKey] / max) * 100 : 0
+        const h = max > 0 ? ((d[dataKey] || 0) / max) * 100 : 0
         return (
           <div
             key={i}
-            className="flex-1 rounded-t transition-all hover:opacity-80 group relative"
+            className="flex-1 rounded-t transition-all hover:opacity-80"
             style={{ height: `${Math.max(h, 2)}%`, backgroundColor: color, minWidth: 3, maxWidth: 16 }}
-            title={`${d.label}: ${d[dataKey].toLocaleString()}`}
+            title={`${d.label}: ${(d[dataKey] || 0).toLocaleString()}`}
           />
         )
       })}
@@ -169,31 +166,83 @@ function BarRow({ label, value, maxValue, color = '#6b7280' }) {
 // ─── Main Page ───────────────────────────────────────────────────────────────
 
 export function AnalyticsDashboardPage() {
-  const [dateRange, setDateRange] = useState('Last 30 days')
+  const [dateRange, setDateRange] = useState('30d')
   const [showDatePicker, setShowDatePicker] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState(null)
+  const [stats, setStats] = useState(null)
+
+  const loadData = useCallback(async () => {
+    setLoading(true)
+    try {
+      const [overviewRes, dashRes] = await Promise.all([
+        api.get(`/analytics/overview?range=${dateRange}`),
+        api.get(`/analytics/dashboard?range=${dateRange}`),
+      ])
+      setData(overviewRes)
+      setStats(dashRes)
+    } catch {
+      // Fall back to mock data
+      const mockDaily = generateMockDailyData(dateRange === '7d' ? 7 : dateRange === '90d' ? 90 : 30)
+      setData({
+        daily: mockDaily,
+        topPages: MOCK_TOP_PAGES,
+        referrers: MOCK_REFERRERS,
+        utm: MOCK_UTM,
+        geo: MOCK_GEO,
+      })
+      setStats({
+        bounceRate: 42.3,
+        avgDuration: 134,
+        trends: { visitors: 12.5, users: 8.3, sessions: 15.1, bounce: -3.2 },
+        totalVisitors: mockDaily.reduce((s, d) => s + d.visitors, 0),
+        uniqueUsers: mockDaily.reduce((s, d) => s + d.uniqueUsers, 0),
+        sessions: mockDaily.reduce((s, d) => s + d.sessions, 0),
+      })
+    }
+    setLoading(false)
+  }, [dateRange])
+
+  useEffect(() => { loadData() }, [loadData])
 
   const totals = useMemo(() => {
-    const visitors = MOCK_DAILY.reduce((s, d) => s + d.visitors, 0)
-    const unique = MOCK_DAILY.reduce((s, d) => s + d.uniqueUsers, 0)
-    const sessions = MOCK_DAILY.reduce((s, d) => s + d.sessions, 0)
-    const pageviews = MOCK_DAILY.reduce((s, d) => s + d.pageviews, 0)
-    const bounceRate = 42.3
-    const avgDuration = '2m 14s'
-    return { visitors, unique, sessions, pageviews, bounceRate, avgDuration }
-  }, [])
+    if (stats) {
+      const pageviews = data?.daily?.reduce((s, d) => s + (d.pageviews || 0), 0) || 0
+      return {
+        visitors: stats.totalVisitors || 0,
+        unique: stats.uniqueUsers || 0,
+        sessions: stats.sessions || 0,
+        pageviews,
+        bounceRate: typeof stats.bounceRate === 'number' ? `${stats.bounceRate.toFixed(1)}%` : '—',
+        avgDuration: stats.avgDuration ? formatDuration(stats.avgDuration) : '—',
+      }
+    }
+    if (data?.daily) {
+      const daily = data.daily
+      return {
+        visitors: daily.reduce((s, d) => s + (d.visitors || 0), 0),
+        unique: daily.reduce((s, d) => s + (d.uniqueUsers || 0), 0),
+        sessions: daily.reduce((s, d) => s + (d.sessions || 0), 0),
+        pageviews: daily.reduce((s, d) => s + (d.pageviews || 0), 0),
+        bounceRate: '42.3%',
+        avgDuration: '2m 14s',
+      }
+    }
+    return null
+  }, [data, stats])
 
-  const handleRefresh = useCallback(() => {
-    setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 1200)
-  }, [])
+  const daily = data?.daily || []
+  const topPages = data?.topPages || []
+  const referrers = data?.referrers || []
+  const utm = data?.utm || []
+  const geo = data?.geo || []
 
-  const maxReferrerVisitors = Math.max(...MOCK_REFERRERS.map(r => r.visitors))
-  const maxGeoVisitors = Math.max(...MOCK_GEO.map(g => g.visitors))
-  const maxPageViews = Math.max(...MOCK_TOP_PAGES.map(p => p.views))
+  const maxReferrerVisitors = referrers.length ? Math.max(...referrers.map(r => r.visitors)) : 1
+  const maxGeoVisitors = geo.length ? Math.max(...geo.map(g => g.visitors)) : 1
+  const maxPageViews = topPages.length ? Math.max(...topPages.map(p => p.views)) : 1
 
   return (
-    <PageLayout>
+    <AnalyticsLayout>
       <Header title="Analytics Dashboard" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
@@ -209,157 +258,182 @@ export function AnalyticsDashboardPage() {
             <div className="relative">
               <button
                 onClick={() => setShowDatePicker(!showDatePicker)}
-                className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors"
+                className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 transition-colors"
               >
                 <Calendar className="w-4 h-4" />
-                {dateRange}
+                {RANGE_LABEL_MAP[dateRange] || dateRange}
                 <ChevronDown className="w-3.5 h-3.5" />
               </button>
               {showDatePicker && (
-                <div className="absolute right-0 top-full mt-1 z-20 w-48 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg py-1">
-                  {DATE_RANGES.map(r => (
-                    <button
-                      key={r}
-                      onClick={() => { setDateRange(r); setShowDatePicker(false) }}
-                      className={cn(
-                        'block w-full text-left px-4 py-2 text-sm transition-colors',
-                        r === dateRange
-                          ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750'
-                      )}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowDatePicker(false)} />
+                  <div className="absolute right-0 top-full mt-1 z-50 w-48 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 shadow-lg py-1">
+                    {DATE_RANGES.map(r => (
+                      <button
+                        key={r.value}
+                        onClick={() => { setDateRange(r.value); setShowDatePicker(false) }}
+                        className={cn(
+                          'block w-full text-left px-4 py-2 text-sm transition-colors',
+                          r.value === dateRange
+                            ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-medium'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50'
+                        )}
+                      >
+                        {r.label}
+                      </button>
+                    ))}
+                  </div>
+                </>
               )}
             </div>
             <button
-              onClick={handleRefresh}
-              className="p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              onClick={loadData}
+              disabled={loading}
+              className="p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-500 hover:text-gray-700 transition-colors disabled:opacity-50"
               title="Refresh"
             >
-              <RefreshCw className={cn('w-4 h-4', refreshing && 'animate-spin')} />
-            </button>
-            <button
-              className="p-2 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              title="Export"
-            >
-              <Download className="w-4 h-4" />
+              <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
             </button>
           </div>
         </div>
 
         {/* Metric Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          <MetricCard icon={Eye} label="Visitors" value={totals.visitors} change={12.5} />
-          <MetricCard icon={Users} label="Unique Users" value={totals.unique} change={8.3} />
-          <MetricCard icon={BarChart3} label="Sessions" value={totals.sessions} change={15.1} />
-          <MetricCard icon={MousePointerClick} label="Pageviews" value={totals.pageviews} change={9.7} />
-          <MetricCard icon={TrendingDown} label="Bounce Rate" value={`${totals.bounceRate}%`} change={-3.2} />
-          <MetricCard icon={Clock} label="Avg. Duration" value={totals.avgDuration} change={5.8} />
-        </div>
-
-        {/* Visitors Chart */}
-        <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Visitors Over Time</h3>
-            <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#6b7280' }} />
-                Visitors
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#3b82f6' }} />
-                Unique Users
-              </span>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <MiniBarChart data={MOCK_DAILY} dataKey="visitors" height={100} color="#6b7280" />
-            <MiniBarChart data={MOCK_DAILY} dataKey="uniqueUsers" height={60} color="#3b82f6" />
-          </div>
-          <div className="flex justify-between mt-2 text-[10px] text-gray-400 dark:text-gray-500">
-            {MOCK_DAILY.filter((_, i) => i % 5 === 0).map(d => (
-              <span key={d.date}>{d.label}</span>
+        {loading && !totals ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i} className="rounded-lg border border-gray-200 bg-white p-5 animate-pulse">
+                <div className="h-4 w-20 bg-gray-100 rounded mb-3" />
+                <div className="h-8 w-16 bg-gray-100 rounded" />
+              </div>
             ))}
           </div>
-        </div>
+        ) : totals && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+            <MetricCard icon={Eye} label="Visitors" value={totals.visitors} change={stats?.trends?.visitors} />
+            <MetricCard icon={Users} label="Unique Users" value={totals.unique} change={stats?.trends?.users} />
+            <MetricCard icon={BarChart3} label="Sessions" value={totals.sessions} change={stats?.trends?.sessions} />
+            <MetricCard icon={MousePointerClick} label="Pageviews" value={totals.pageviews} />
+            <MetricCard icon={TrendingDown} label="Bounce Rate" value={totals.bounceRate} change={stats?.trends?.bounce} />
+            <MetricCard icon={Clock} label="Avg. Duration" value={totals.avgDuration} />
+          </div>
+        )}
+
+        {/* Visitors Chart */}
+        {daily.length > 0 && (
+          <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Visitors Over Time</h3>
+              <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#6b7280' }} />
+                  Visitors
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#3b82f6' }} />
+                  Unique Users
+                </span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <MiniBarChart data={daily} dataKey="visitors" height={100} color="#6b7280" />
+              <MiniBarChart data={daily} dataKey="uniqueUsers" height={60} color="#3b82f6" />
+            </div>
+            {daily.length > 1 && (
+              <div className="flex justify-between mt-2 text-[10px] text-gray-400">
+                {daily.filter((_, i) => i % Math.max(1, Math.floor(daily.length / 6)) === 0).map(d => (
+                  <span key={d.date || d.label}>{d.label}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Two-column: Top Pages + Referrers */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TableSection title="Top Pages">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-100 dark:border-gray-700">
-                    <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Page</th>
-                    <th className="text-right px-3 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Views</th>
-                    <th className="text-right px-3 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Unique</th>
-                    <th className="text-right px-5 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Avg Time</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_TOP_PAGES.map(page => (
-                    <tr key={page.path} className="border-b border-gray-50 dark:border-gray-750 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                      <td className="px-5 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-gray-900 dark:text-white">{page.path}</span>
-                          <span className="text-gray-400 dark:text-gray-500 text-xs hidden sm:inline">{page.title}</span>
-                        </div>
-                      </td>
-                      <td className="text-right px-3 py-2.5 tabular-nums text-gray-700 dark:text-gray-300">{page.views.toLocaleString()}</td>
-                      <td className="text-right px-3 py-2.5 tabular-nums text-gray-700 dark:text-gray-300">{page.unique.toLocaleString()}</td>
-                      <td className="text-right px-5 py-2.5 text-gray-500 dark:text-gray-400">{page.avgTime}</td>
+            {topPages.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-gray-400 text-center">No page data yet</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Page</th>
+                      <th className="text-right px-3 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Views</th>
+                      <th className="text-right px-5 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Unique</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {topPages.map(page => (
+                      <tr key={page.path} className="border-b border-gray-50 dark:border-gray-750 hover:bg-gray-50 transition-colors">
+                        <td className="px-5 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-gray-900 dark:text-white truncate max-w-[160px]">{page.path}</span>
+                            {page.title && <span className="text-gray-400 text-xs hidden sm:inline">{page.title}</span>}
+                          </div>
+                        </td>
+                        <td className="text-right px-3 py-2.5 tabular-nums text-gray-700">{(page.views || 0).toLocaleString()}</td>
+                        <td className="text-right px-5 py-2.5 tabular-nums text-gray-700">{(page.unique || 0).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </TableSection>
 
           <TableSection title="Referrers">
-            <div className="py-2">
-              {MOCK_REFERRERS.map(ref => (
-                <BarRow key={ref.source} label={ref.source} value={ref.visitors} maxValue={maxReferrerVisitors} color="#6b7280" />
-              ))}
-            </div>
+            {referrers.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-gray-400 text-center">No referrer data yet</p>
+            ) : (
+              <div className="py-2">
+                {referrers.map(ref => (
+                  <BarRow key={ref.source} label={ref.source} value={ref.visitors} maxValue={maxReferrerVisitors} color="#6b7280" />
+                ))}
+              </div>
+            )}
           </TableSection>
         </div>
 
         {/* Two-column: UTM Campaigns + Geographic Data */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <TableSection title="UTM Campaigns">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-100 dark:border-gray-700">
-                    <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Campaign</th>
-                    <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Source</th>
-                    <th className="text-right px-3 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Visitors</th>
-                    <th className="text-right px-5 py-2.5 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Conv.</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_UTM.map(utm => (
-                    <tr key={utm.campaign} className="border-b border-gray-50 dark:border-gray-750 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                      <td className="px-5 py-2.5 font-medium text-gray-900 dark:text-white">{utm.campaign}</td>
-                      <td className="px-3 py-2.5 text-gray-500 dark:text-gray-400">{utm.source}/{utm.medium}</td>
-                      <td className="text-right px-3 py-2.5 tabular-nums text-gray-700 dark:text-gray-300">{utm.visitors.toLocaleString()}</td>
-                      <td className="text-right px-5 py-2.5 tabular-nums text-emerald-600 dark:text-emerald-400">{utm.conversions}</td>
+            {utm.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-gray-400 text-center">No UTM campaign data yet</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-100 dark:border-gray-700">
+                      <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Campaign</th>
+                      <th className="text-left px-3 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                      <th className="text-right px-5 py-2.5 text-xs font-medium text-gray-500 uppercase tracking-wider">Visitors</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {utm.map((u, i) => (
+                      <tr key={i} className="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+                        <td className="px-5 py-2.5 font-medium text-gray-900 dark:text-white">{u.campaign}</td>
+                        <td className="px-3 py-2.5 text-gray-500">{u.source}/{u.medium}</td>
+                        <td className="text-right px-5 py-2.5 tabular-nums text-gray-700">{(u.visitors || 0).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </TableSection>
 
           <TableSection title="Countries">
-            <div className="py-2">
-              {MOCK_GEO.map(geo => (
-                <BarRow key={geo.code} label={`${geo.country}`} value={geo.visitors} maxValue={maxGeoVisitors} color="#3b82f6" />
-              ))}
-            </div>
+            {geo.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-gray-400 text-center">No geographic data yet</p>
+            ) : (
+              <div className="py-2">
+                {geo.map(g => (
+                  <BarRow key={g.country + g.code} label={g.country} value={g.visitors} maxValue={maxGeoVisitors} color="#3b82f6" />
+                ))}
+              </div>
+            )}
           </TableSection>
         </div>
 
@@ -369,9 +443,17 @@ export function AnalyticsDashboardPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
-          <span>Tracking live — 14 visitors online now</span>
+          <span>Tracking live</span>
         </div>
       </div>
-    </PageLayout>
+    </AnalyticsLayout>
   )
+}
+
+function formatDuration(seconds) {
+  if (!seconds) return '0s'
+  if (seconds < 60) return `${Math.round(seconds)}s`
+  const m = Math.floor(seconds / 60)
+  const s = Math.round(seconds % 60)
+  return `${m}m ${s}s`
 }
