@@ -57,6 +57,9 @@ app.use('/api', customRoutes)
 const { linkRedirect } = require('./lib/@custom/redirects')
 app.use(linkRedirect)
 
+// API 404 — must be before SPA fallback so unmatched /api/* routes return JSON
+app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }))
+
 // Serve React SPA in production
 const publicDir = path.join(__dirname, '..', 'public')
 if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {

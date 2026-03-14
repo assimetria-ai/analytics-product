@@ -2,7 +2,7 @@
 #  Assimetria Product Template — Root Dockerfile  (multi-stage, production-ready)
 #
 #  Produces a single image that:
-#    1. Builds the React/Vite frontend (dist/)
+#    1. Builds the React/Webpack frontend (dist/)
 #    2. Bundles the Node.js/Express backend
 #    3. Serves static assets from the backend (or a separate nginx is preferred)
 #
@@ -12,7 +12,7 @@
 #
 #  Build targets
 #    --target server-deps   → only production server deps (CI cache layer)
-#    --target client-build  → only Vite build (CI cache layer)
+#    --target client-build  → only Webpack build (CI cache layer)
 #    --target runner        → final production image (default)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -36,10 +36,6 @@ COPY client/package*.json ./
 RUN npm ci --ignore-scripts
 
 COPY client/ ./
-
-# Accept API URL at build time; defaults to relative path (same host)
-ARG VITE_API_URL=/api
-ENV VITE_API_URL=${VITE_API_URL}
 
 RUN npm run build
 
