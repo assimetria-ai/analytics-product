@@ -23,7 +23,9 @@ const corsOptions = {
     if (isOriginAllowed(origin)) {
       callback(null, true)
     } else {
-      callback(new Error(`CORS: origin '${origin}' not allowed`))
+      const err = new Error(`CORS: origin '${origin}' not allowed`)
+      err.status = 403
+      callback(err)
     }
   },
   credentials: true,
