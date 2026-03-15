@@ -40,22 +40,27 @@ const {
 })
 
 /**
- * Routes exempt from CSRF validation.
- * Auth routes (register/login/forgot-password) are called before the client
- * has a session, so CSRF protection doesn't apply — there's no cookie to steal.
- * Webhook routes receive server-to-server calls that can't carry CSRF tokens.
+ * Routes exempt from CSRF validation (path as seen by Express after /api mount).
+ * Auth routes (register/login/refresh/password-reset) are called before the client
+ * has a session cookie, so CSRF protection doesn't apply — there's no cookie to steal.
+ * Webhook and embed/ingest routes receive server-to-server calls that can't carry CSRF tokens.
  */
 const CSRF_EXEMPT_PATHS = [
-  '/api/auth/register',
-  '/api/auth/login',
-  '/api/auth/forgot-password',
-  '/api/auth/reset-password',
-  '/api/auth/refresh',
-  '/api/webhook',
+  '/users',              // POST /api/users — register
+  '/sessions',           // POST /api/sessions — login
+  '/sessions/refresh',   // POST /api/sessions/refresh — token rotation
+  '/users/password/request',  // POST /api/users/password/request — forgot password
+  '/users/password/reset',    // POST /api/users/password/reset — reset password
+  '/users/email/verify',      // POST /api/users/email/verify — verify email
+  '/users/email/verify/request', // POST /api/users/email/verify/request — resend verification
+  '/auth/',              // OAuth routes (GET but listed for completeness)
+  '/webhook',            // Server-to-server webhook callbacks
+  '/embed/',             // Embed script data ingestion
 ]
 
 /**
- * CSRF protection middleware that validates tokens on state-changing requests
+ * CSRF protection middleware that validates tokens on state-changing requests.
+ * NOTE: This middleware is mounted at /api, so req.path has the /api prefix stripped.
  */
 const csrfProtection = (req, res, next) => {
   // Skip CSRF validation in test/development environments if needed
@@ -64,7 +69,8 @@ const csrfProtection = (req, res, next) => {
   }
 
   // Skip CSRF for auth and webhook routes (no session to protect)
-  if (CSRF_EXEMPT_PATHS.some(p => req.path.startsWith(p.replace('/api', '')))) {
+  // req.path is relative to the /api mount point (e.g. /sessions, /users)
+  if (CSRF_EXEMPT_PATHS.some(p => req.path === p || req.path.startsWith(p))) {
     return next()
   }
 
