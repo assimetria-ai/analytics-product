@@ -61,11 +61,6 @@ COPY server/package*.json ./server/
 # Built frontend assets (served by Express as static files or a CDN)
 # Server looks for static files at server/src/../public = server/public
 COPY --from=client-build /app/client/dist ./server/public
-COPY server/landing.html ./server/public/landing.html
-
-# Landing page — served as public homepage for unauthenticated visitors
-
-
 
 # Landing page: copy landing.html into server/public/ so Express serves it at /
 # instead of the SPA shell. Real landing pages are synced from the OS brands
