@@ -57,7 +57,7 @@ export function AuthPage() {
         password: loginPassword })
       if (result?.totp_required) {
         // Credentials valid but 2FA required — hand off to the TOTP challenge page
-        navigate('/2fa/verify', { state })
+        navigate('/2fa/verify', { state: { email: loginEmail, password: loginPassword } })
         return
       }
       // Session cookie already set by the server; refresh auth context
