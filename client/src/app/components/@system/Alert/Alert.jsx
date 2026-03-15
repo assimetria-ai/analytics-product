@@ -22,7 +22,6 @@ const alertVariants = cva(
     },
   },
 )
-)
 
 const ICONS = {
   default,
