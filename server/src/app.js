@@ -25,6 +25,21 @@ app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/healthz', (_req, res) => res.status(200).json({ status: 'ok' }))
 
+// Admin health endpoint — returns 200 with DB connection status.
+// Registered before CORS so infrastructure probes can reach it without Origin headers.
+const db = require('./lib/@system/PostgreSQL')
+app.get('/api/admin/health', async (_req, res) => {
+  const result = { status: 'ok', timestamp: new Date().toISOString(), db: 'connected' }
+  try {
+    await db.one('SELECT 1')
+  } catch (_err) {
+    result.status = 'degraded'
+    result.db = 'disconnected'
+    return res.status(503).json(result)
+  }
+  res.status(200).json(result)
+})
+
 // Serve the embed tracking script publicly at /embed.js (no auth, cache 1h)
 const TRACKER_PATH = path.join(__dirname, '..', '..', '@custom', 'embed', 'tracker.js')
 app.get('/embed.js', (_req, res) => {
