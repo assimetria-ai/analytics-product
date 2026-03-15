@@ -83,6 +83,31 @@ app.use(linkRedirect)
 // API 404 — must be before SPA fallback so unmatched /api/* routes return JSON
 app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }))
 
+// ─── SEO: robots.txt ──────────────────────────────────────────────────────────
+// Provides a robots.txt that points crawlers to the sitemap.
+app.get('/robots.txt', (req, res) => {
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  res.type('text/plain').send(
+    `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`
+  );
+});
+
+// ─── SEO: sitemap index ───────────────────────────────────────────────────────
+app.get('/sitemap.xml', (req, res) => {
+  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+  const now = new Date().toISOString().split('T')[0];
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${baseUrl}/api/blog/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+</sitemapindex>`;
+  res.set('Content-Type', 'application/xml; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.send(xml);
+});
+
 // Landing page support: if server/public/landing.html exists, serve it at root (/)
 // so Railway deploys show the marketing landing page instead of the SPA shell.
 // The SPA (dashboard) is still available at /app and all other routes.
