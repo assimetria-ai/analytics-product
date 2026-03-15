@@ -66,6 +66,8 @@ COPY --from=client-build /app/client/dist ./server/public
 COPY client/public/favicon* ./server/public/
 # Landing page: copy landing.html into server/public/ so Express serves it at /
 COPY landing.html ./server/public/landing.html
+# Logo files for landing page
+COPY client/public/logo*.png ./server/public/
 RUN chown -R appuser:appgroup /app
 USER appuser
 
