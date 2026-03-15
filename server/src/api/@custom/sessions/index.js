@@ -5,9 +5,10 @@ const router = express.Router()
 const { authenticate } = require('../../../lib/@system/Helpers/auth')
 const AnalyticsSessionRepo = require('../../../db/repos/@custom/AnalyticsSessionRepo')
 
-// ── GET /api/sessions — list sessions ────────────────────────────────────────
+// ── GET /api/user-sessions — list analytics sessions ─────────────────────────
+// Renamed from /sessions to /user-sessions to avoid conflict with @system/sessions (auth)
 
-router.get('/sessions', authenticate, async (req, res, next) => {
+router.get('/user-sessions', authenticate, async (req, res, next) => {
   try {
     const { device, country, limit = '50', offset = '0' } = req.query
     const [sessions, total] = await Promise.all([
@@ -46,9 +47,9 @@ router.get('/sessions', authenticate, async (req, res, next) => {
   }
 })
 
-// ── GET /api/sessions/:id — single session with events ───────────────────────
+// ── GET /api/user-sessions/:id — single session with events ──────────────────
 
-router.get('/sessions/:id', authenticate, async (req, res, next) => {
+router.get('/user-sessions/:id', authenticate, async (req, res, next) => {
   try {
     const session = await AnalyticsSessionRepo.findById(req.params.id)
     if (!session) return res.status(404).json({ message: 'Session not found' })

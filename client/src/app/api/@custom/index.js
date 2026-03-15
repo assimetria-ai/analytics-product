@@ -33,6 +33,7 @@ export const getFunnelAnalysis = (id, range = '30d') =>
   api.get(`/funnels/${id}/analysis?range=${range}`)
 
 // ─── Sessions API ─────────────────────────────────────────────────────────────
+// Uses /user-sessions to avoid conflict with @system/sessions (auth)
 
 export const getSessions = ({ device, country, limit = 50, offset = 0 } = {}) => {
   const params = new URLSearchParams()
@@ -40,11 +41,11 @@ export const getSessions = ({ device, country, limit = 50, offset = 0 } = {}) =>
   if (country) params.set('country', country)
   params.set('limit', String(limit))
   params.set('offset', String(offset))
-  return api.get(`/sessions?${params.toString()}`)
+  return api.get(`/user-sessions?${params.toString()}`)
 }
 
 export const getSession = (id) =>
-  api.get(`/sessions/${id}`)
+  api.get(`/user-sessions/${id}`)
 
 // ─── Brand types ─────────────────────────────────────────────────────────────
 
