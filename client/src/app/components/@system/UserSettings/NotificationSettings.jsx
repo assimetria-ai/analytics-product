@@ -4,7 +4,6 @@
 import { useState } from 'react'
 import { Mail, Bell, MessageSquare, Activity, CreditCard } from 'lucide-react'
 import { SettingsSection, SettingsRow } from './UserSettings'
-import { Switch } from '../Switch/Switch'
 import { Button } from '../Button/Button'
 
 export function NotificationSettings({ user, onUpdate }) {
