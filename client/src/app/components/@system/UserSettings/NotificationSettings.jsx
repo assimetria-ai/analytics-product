@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { Mail, Bell, MessageSquare, Activity, CreditCard } from 'lucide-react'
 import { SettingsSection, SettingsRow } from './UserSettings'
+import { Switch } from '../Switch/Switch'
 import { Button } from '../Button/Button'
 
 export function NotificationSettings({ user, onUpdate }) {
@@ -148,7 +149,7 @@ export function NotificationSettings({ user, onUpdate }) {
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
                   {preferences.pushEnabled
-                    ? "You'll receive push notifications for selected events"
+                    ? 'You'll receive push notifications for selected events'
                     : 'Enable push notifications to stay updated on the go'}
                 </p>
                 <Button

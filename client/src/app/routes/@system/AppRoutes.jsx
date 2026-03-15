@@ -99,6 +99,27 @@ const UXDemoPage = lazy(() =>
 const MobileResponsiveDemo = lazy(() =>
   import('../../pages/app/@system/MobileResponsiveDemo').then((m) => ({ default: m.MobileResponsiveDemo }))
 )
+const ContentCalendarPage = lazy(() =>
+  import('../../pages/app/@custom/ContentCalendarPage').then((m) => ({ default: m.ContentCalendarPage }))
+)
+const HashtagResearchPage = lazy(() =>
+  import('../../pages/app/@custom/HashtagResearchPage').then((m) => ({ default: m.HashtagResearchPage }))
+)
+const PostsList = lazy(() =>
+  import('../../pages/app/@custom/PostsList').then((m) => ({ default: m.PostsList }))
+)
+const PostScheduler = lazy(() =>
+  import('../../pages/app/@custom/PostScheduler').then((m) => ({ default: m.PostScheduler }))
+)
+const ContentTemplatesPage = lazy(() =>
+  import('../../pages/app/@custom/ContentTemplatesPage')
+)
+const EngagementAnalyticsPage = lazy(() =>
+  import('../../pages/app/@custom/EngagementAnalyticsPage')
+)
+const AnalyticsDashboardPage = lazy(() =>
+  import('../../pages/app/@custom/AnalyticsDashboardPage').then((m) => ({ default: m.AnalyticsDashboardPage }))
+)
 
 // Teams pages
 const TeamsPage = lazy(() =>
@@ -106,32 +127,6 @@ const TeamsPage = lazy(() =>
 )
 const TeamDetailPage = lazy(() =>
   import('../../pages/app/TeamDetailPage').then((m) => ({ default: m.TeamDetailPage }))
-)
-
-// @custom — Analytics product pages
-const DashboardPage = lazy(() =>
-  import('../../pages/app/@custom/DashboardPage').then((m) => ({ default: m.DashboardPage }))
-)
-const AnalyticsDashboardPage = lazy(() =>
-  import('../../pages/app/@custom/AnalyticsDashboardPage').then((m) => ({ default: m.AnalyticsDashboardPage }))
-)
-const FunnelsPage = lazy(() =>
-  import('../../pages/app/@custom/FunnelsPage').then((m) => ({ default: m.FunnelsPage }))
-)
-const UserSessionsPage = lazy(() =>
-  import('../../pages/app/@custom/UserSessionsPage').then((m) => ({ default: m.UserSessionsPage }))
-)
-const ErrorTrackingPage = lazy(() =>
-  import('../../pages/app/@custom/ErrorTrackingPage').then((m) => ({ default: m.ErrorTrackingPage }))
-)
-const EmbedSetupPage = lazy(() =>
-  import('../../pages/app/@custom/EmbedSetupPage').then((m) => ({ default: m.EmbedSetupPage }))
-)
-const EventsPage = lazy(() =>
-  import('../../pages/app/@custom/EventsPage').then((m) => ({ default: m.EventsPage }))
-)
-const ApiAccessPage = lazy(() =>
-  import('../../pages/app/@custom/ApiAccessPage').then((m) => ({ default: m.ApiAccessPage }))
 )
 
 function PageFallback() {
@@ -215,71 +210,12 @@ export function AppRoutes() {
         <Route path="/dashboard" element={<Navigate to="/app" replace />} />
         <Route path="/dashboard/*" element={<Navigate to="/app" replace />} />
 
-        {/* App root — redirect to analytics dashboard */}
-        <Route path="/app" element={<Navigate to="/app/dashboard" replace />} />
-
-        {/* @custom — Analytics product routes */}
+        {/* App (authenticated) */}
         <Route
-          path="/app/dashboard"
+          path="/app"
           element={
             <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/analytics"
-          element={
-            <ProtectedRoute>
-              <AnalyticsDashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/funnels"
-          element={
-            <ProtectedRoute>
-              <FunnelsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/sessions"
-          element={
-            <ProtectedRoute>
-              <UserSessionsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/errors"
-          element={
-            <ProtectedRoute>
-              <ErrorTrackingPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/embed"
-          element={
-            <ProtectedRoute>
-              <EmbedSetupPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/events"
-          element={
-            <ProtectedRoute>
-              <EventsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/app/api-access"
-          element={
-            <ProtectedRoute>
-              <ApiAccessPage />
+              <HomePage />
             </ProtectedRoute>
           }
         />
@@ -354,6 +290,72 @@ export function AppRoutes() {
           element={
             <ProtectedRoute>
               <MobileResponsiveDemo />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Content Calendar */}
+        <Route
+          path="/app/calendar"
+          element={
+            <ProtectedRoute>
+              <ContentCalendarPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Posts */}
+        <Route
+          path="/app/posts"
+          element={
+            <ProtectedRoute>
+              <PostsList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/posts/new"
+          element={
+            <ProtectedRoute>
+              <PostScheduler />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Hashtag Research */}
+        <Route
+          path="/app/hashtags"
+          element={
+            <ProtectedRoute>
+              <HashtagResearchPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Content Templates */}
+        <Route
+          path="/app/templates"
+          element={
+            <ProtectedRoute>
+              <ContentTemplatesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Engagement Analytics */}
+        <Route
+          path="/app/analytics"
+          element={
+            <ProtectedRoute>
+              <AnalyticsDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/app/analytics/engagement"
+          element={
+            <ProtectedRoute>
+              <EngagementAnalyticsPage />
             </ProtectedRoute>
           }
         />

@@ -1,1 +1,1 @@
-export * from './Card.jsx';
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from './Card'

@@ -1,1 +1,1 @@
-export * from './Alert.jsx';
+export { Alert } from './Alert'

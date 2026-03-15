@@ -65,10 +65,4 @@ function Textarea({ className, error, ...props }) {
   )
 }
 
-// Aliases for backward compatibility with UserSettings imports
-const Form = 'form'  // simple pass-through element name
-const FormLabel = ({ children, ...props }) => <label {...props}>{children}</label>
-const FormInput = Input
-const FormTextarea = Textarea
-
-export { FormField, Input, Textarea, Form, FormLabel, FormInput, FormTextarea }
+export { FormField, Input, Textarea }

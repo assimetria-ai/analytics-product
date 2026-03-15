@@ -1,5 +1,5 @@
-// @custom/info.js — Product branding overrides for Analytics Product
-// Overrides values from .config/info.js (the @system default)
+// @custom — Analytics Product branding configuration
+// Overrides .config/info.js defaults
 
 const GENERAL_INFO = {
   name: 'Analytics Product',
@@ -10,14 +10,14 @@ const GENERAL_INFO = {
     buttonText: 'Get Started for Free',
   },
   url: 'https://analytics-product-production.up.railway.app',
-  email: 'support@assimetria.com',
-  supportEmail: 'support@assimetria.com',
+  email: 'hello@analyticsproduct.com',
+  supportEmail: 'support@analyticsproduct.com',
   socials: [],
   theme_color: '#1E3A5F',
-  background_color: '#f7f6fe',
+  background_color: '#F0F4F8',
   links: {
-    faq: 'https://analytics-product-production.up.railway.app/docs',
-    refer_and_earn: 'https://analytics-product-production.up.railway.app/refer-and-earn',
+    faq: 'https://analyticsproduct.com/faq',
+    refer_and_earn: 'https://analyticsproduct.com/refer',
   },
   products: {
     monthly: {
@@ -32,15 +32,34 @@ const GENERAL_INFO = {
   plans: [
     {
       priceId: 'price_REPLACE_ME',
+      price: 0,
+      yearlyPrice: 0,
+      name: 'Free',
+      description: 'Free Plan — 10K events/month, core analytics',
+      paymentLink: '',
+      noAllowedRoutes: [],
+    },
+    {
+      priceId: 'price_REPLACE_ME',
       price: 49,
       yearlyPrice: 397,
       name: 'Pro',
-      description: 'Pro Plan',
+      description: 'Pro Plan — Unlimited events, funnels, retention, session replay',
+      paymentLink: '',
+      noAllowedRoutes: [],
+    },
+    {
+      priceId: 'price_REPLACE_ME',
+      price: 199,
+      yearlyPrice: 1990,
+      name: 'Enterprise',
+      description: 'Enterprise Plan — Dedicated support, SSO, custom integrations',
       paymentLink: '',
       noAllowedRoutes: [],
     },
   ],
   authMode: 'web2',
+  emailProvider: 'resend',
 }
 
 module.exports = GENERAL_INFO
