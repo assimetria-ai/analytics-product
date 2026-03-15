@@ -3,6 +3,7 @@ const cors = require('cors')
 const ALLOWED_ORIGINS = [
   process.env.APP_URL,
   process.env.RAILWAY_PUBLIC_DOMAIN && `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`,
+  process.env.RAILWAY_STATIC_URL,
   'http://localhost:5173',
   'http://localhost:3000',
 ].filter(Boolean)
