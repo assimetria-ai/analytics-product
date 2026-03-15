@@ -1,4 +1,6 @@
-// @system CORS middleware — fixed 2026-03-15 (inline 403 rejection, no Express error handler)
+// @system CORS middleware — fixed 2026-03-15 (task #13054)
+// Fix: handle CORS rejection inline (res.status(403)) instead of relying on
+// error callback propagation, which Express converts to 500 in many setups.
 const cors = require('cors')
 
 const ALLOWED_ORIGINS = [
@@ -15,9 +17,9 @@ function isOriginAllowed(origin) {
   // CORS enforcement doesn't apply. Allow these in all environments.
   // Production healthchecks still use /healthz (registered before CORS middleware).
   //
-  // Also handle the string 'undefined' — Railway CDN edge proxies (Fastly/Varnish) may
-  // serialise a missing Origin header as the literal string 'undefined'.
-  if (!origin || origin === 'undefined') return true
+  // Also handle the string 'undefined' / 'null' — Railway CDN edge proxies (Fastly/Varnish)
+  // may serialise a missing Origin header as the literal string 'undefined'.
+  if (!origin || origin === 'undefined' || origin === 'null') return true
 
   // Exact match only — wildcard subdomain matching removed (SEC-1500: attacker-registered subdomain risk)
   if (ALLOWED_ORIGINS.includes(origin)) return true
