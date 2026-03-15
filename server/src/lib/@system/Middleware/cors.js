@@ -13,7 +13,10 @@ function isOriginAllowed(origin) {
   // always sends an Origin header on cross-origin requests, so absence of Origin means
   // CORS enforcement doesn't apply. Allow these in all environments.
   // Production healthchecks still use /healthz (registered before CORS middleware).
-  if (!origin) return true
+  //
+  // Also handle the string 'undefined' — some CDN edge proxies (Fastly/Varnish) may
+  // serialise a missing Origin header as the literal string 'undefined'.
+  if (!origin || origin === 'undefined') return true
 
   // Exact match only — wildcard subdomain matching removed (SEC-1500: attacker-registered subdomain risk)
   if (ALLOWED_ORIGINS.includes(origin)) return true
@@ -21,22 +24,31 @@ function isOriginAllowed(origin) {
   return false
 }
 
-const corsOptions = {
-  origin(origin, callback) {
-    if (isOriginAllowed(origin)) {
-      callback(null, true)
-    } else {
-      // Use a proper CORS rejection (403) instead of Error (which Express turns into 500)
-      const err = new Error(`CORS: origin '${origin}' not allowed`)
-      err.status = 403
-      callback(err)
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
-  exposedHeaders: ['X-Total-Count', 'X-Request-Id'],
-  maxAge: 600, // preflight cache 10 min
+/**
+ * Custom CORS middleware that wraps the `cors` package but handles rejections
+ * inline (returning 403 directly) instead of passing an Error to next().
+ *
+ * The cors package calls next(err) on rejection, but Express error handlers
+ * sometimes lose err.status and default to 500. By responding directly we
+ * guarantee a clean 403 with the correct JSON body.
+ */
+function corsMiddleware(req, res, next) {
+  const origin = req.headers.origin
+
+  // Fast path: origin allowed — delegate to cors package for header setting
+  if (isOriginAllowed(origin)) {
+    return cors({
+      origin: true,
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
+      exposedHeaders: ['X-Total-Count', 'X-Request-Id'],
+      maxAge: 600,
+    })(req, res, next)
+  }
+
+  // Rejection: respond directly with 403 — never pass to next(err)
+  res.status(403).json({ message: `CORS: origin '${origin}' not allowed` })
 }
 
-module.exports = cors(corsOptions)
+module.exports = corsMiddleware
