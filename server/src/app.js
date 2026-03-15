@@ -25,6 +25,14 @@ app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/healthz', (_req, res) => res.status(200).json({ status: 'ok' }))
 
+// Serve the embed tracking script publicly at /embed.js (no auth, cache 1h)
+const TRACKER_PATH = path.join(__dirname, '..', '..', '@custom', 'embed', 'tracker.js')
+app.get('/embed.js', (_req, res) => {
+  res.set('Content-Type', 'application/javascript')
+  res.set('Cache-Control', 'public, max-age=3600')
+  res.sendFile(TRACKER_PATH)
+})
+
 app.use(securityHeaders)
 // CORS only for API routes — static files and SPA catch-all must be accessible
 // via direct browser navigation (no Origin header). Previously applied globally,
@@ -57,7 +65,12 @@ app.use('/api', customRoutes)
 const { linkRedirect } = require('./lib/@custom/redirects')
 app.use(linkRedirect)
 
-// Serve React SPA in production
+// API 404 — must be before SPA fallback so unmatched /api/* routes return JSON
+app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }))
+
+// Landing page support: if server/public/landing.html exists, serve it at root (/)
+// so Railway deploys show the marketing landing page instead of the SPA shell.
+// The SPA (dashboard) is still available at /app and all other routes.
 const publicDir = path.join(__dirname, '..', 'public')
 if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {
   const landingFile = path.join(publicDir, 'landing.html')

@@ -1,1 +1,1 @@
-export { FeatureSpotlight, useFeatureSpotlight } from './FeatureSpotlight.jsx'
+export { FeatureSpotlight, useFeatureSpotlight } from './FeatureSpotlight'

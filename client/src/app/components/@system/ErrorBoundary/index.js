@@ -1,1 +1,1 @@
-export { ErrorBoundary, withErrorBoundary } from './ErrorBoundary.jsx'
+export { ErrorBoundary, withErrorBoundary } from './ErrorBoundary'

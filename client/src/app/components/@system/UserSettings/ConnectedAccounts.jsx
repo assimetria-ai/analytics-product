@@ -5,10 +5,10 @@
 import { useState } from 'react'
 import { Check, X, ExternalLink, AlertCircle } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Card } from '../Card/Card'
-import { Button } from '../Button/Button'
-import { Badge } from '../Badge/Badge'
-import { Alert } from '../Alert/Alert'
+import { Card } from '../Card'
+import { Button } from '../Button'
+import { Badge } from '../Badge'
+import { Alert } from '../Alert'
 
 export function ConnectedAccounts({
   accounts = [],

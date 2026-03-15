@@ -3,7 +3,7 @@
 
 import { Trash2, Archive, Download, MoreHorizontal, X } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Button } from '../Button/Button'
+import { Button } from '../Button'
 
 export function BulkActions({
   selectedCount = 0,

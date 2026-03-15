@@ -5,8 +5,8 @@
 import { useState } from 'react'
 import { Check, ChevronDown, ChevronUp, X, Trophy } from 'lucide-react'
 import { cn } from '@/app/lib/@system/utils'
-import { Card } from '../Card/Card'
-import { Badge } from '../Badge/Badge'
+import { Card } from '../Card'
+import { Badge } from '../Badge'
 
 export function ProgressChecklist({
   title = 'Getting Started',

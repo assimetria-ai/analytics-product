@@ -3,8 +3,13 @@
  * Handles /:slug redirects for short links
  */
 
+const fs = require('fs')
+const path = require('path')
 const LinksRepo = require('../../db/repos/@custom/LinksRepo')
 const logger = require('../@system/Logger')
+
+// Serve the public embed tracking script
+const EMBED_JS_PATH = path.join(__dirname, '../../static/embed.js')
 
 /**
  * Redirect middleware for short links
@@ -19,6 +24,19 @@ async function linkRedirect(req, res, next) {
   // Skip if it's an API route
   if (req.path.startsWith('/api')) {
     return next()
+  }
+
+  // Serve embed.js at /embed.js — public tracker script
+  if (req.path === '/embed.js') {
+    try {
+      const content = fs.readFileSync(EMBED_JS_PATH, 'utf8')
+      res.set('Content-Type', 'application/javascript')
+      res.set('Cache-Control', 'public, max-age=3600')
+      return res.send(content)
+    } catch (err) {
+      logger.error({ err }, 'Failed to serve embed.js')
+      return next()
+    }
   }
 
   // Skip common static file extensions

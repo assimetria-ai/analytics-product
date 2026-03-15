@@ -1,10 +1,10 @@
 // @system — Landing page features section: icon grid (3–6 features)
-// @custom — to customise, pass `features` prop or create @custom/features.js with customFeatures export
+// @custom — to customise, pass `features` prop or import and wrap with your own data
 import { Zap, Shield, BarChart3, CreditCard, Database, Globe } from 'lucide-react'
 import { Card, CardContent } from '../Card/Card'
-import { customFeatures } from '../../@custom/features'
 
-const TEMPLATE_FEATURES = [
+
+const DEFAULT_FEATURES = [
   {
     icon: Zap,
     title: 'Fast by Default',
@@ -30,8 +30,6 @@ const TEMPLATE_FEATURES = [
     title: 'Deploy Anywhere',
     description: 'Docker + Dockerfile, Railway one-click deploy, and Heroku Procfile included out of the box.' },
 ]
-
-const DEFAULT_FEATURES = customFeatures || TEMPLATE_FEATURES
 
 
 export function FeaturesSection({

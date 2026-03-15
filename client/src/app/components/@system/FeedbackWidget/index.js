@@ -1,1 +1,1 @@
-export { FeedbackWidget } from './FeedbackWidget.jsx'
+export { FeedbackWidget } from './FeedbackWidget'

@@ -11,7 +11,7 @@ import {
   RefreshCw,
   X } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { PageLayout } from '../../../components/@system/layout/PageLayout'
+import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
 import { api } from '../../../lib/@system/api'
 import { ErrorTrackingPageSkeleton } from '../../../components/@system/Skeleton/Skeleton'
@@ -257,7 +257,7 @@ export function ErrorTrackingPage() {
   }
 
   return (
-    <PageLayout>
+    <AnalyticsLayout>
       <Header />
       <main className="container py-8">
         {/* Page header */}
@@ -423,6 +423,6 @@ export function ErrorTrackingPage() {
           onStatusChange={handleStatusChange}
         />
       )}
-    </PageLayout>
+    </AnalyticsLayout>
   )
 }

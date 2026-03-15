@@ -2,86 +2,86 @@
 // Central export file for all reusable system components
 
 // Layout & Navigation
-export { DashboardLayout } from './Dashboard/DashboardLayout.jsx'
-export { PageLayout } from './layout/PageLayout.jsx'
-export { Sidebar, SidebarLogo, SidebarSection, SidebarItem } from './Sidebar/Sidebar.jsx'
-export { Breadcrumbs, BreadcrumbItem, BreadcrumbsFromPath } from './Breadcrumbs/Breadcrumbs.jsx'
+export { DashboardLayout } from './Dashboard/DashboardLayout'
+export { PageLayout } from './layout/PageLayout'
+export { Sidebar, SidebarLogo, SidebarSection, SidebarItem } from './Sidebar/Sidebar'
+export { Breadcrumbs, BreadcrumbItem, BreadcrumbsFromPath } from './Breadcrumbs/Breadcrumbs'
 
 // UI Components
-export { Button } from './ui/button.jsx'
-export { Switch } from './ui/switch.jsx'
-export { Badge } from './ui/badge.jsx'
-export { Card } from './Card/Card.jsx'
-export { Alert } from './Alert/Alert.jsx'
-export { Modal, ConfirmModal } from './Modal/Modal.jsx'
-export { Avatar, AvatarGroup } from './Avatar/Avatar.jsx'
+export { Button } from './ui/button'
+export { Switch } from './ui/switch'
+export { Badge } from './ui/badge'
+export { Card } from './Card/Card'
+export { Alert } from './Alert/Alert'
+export { Modal, ConfirmModal } from './Modal/Modal'
+export { Avatar, AvatarGroup } from './Avatar/Avatar'
 export {
   Dropdown,
   DropdownItem,
   DropdownSeparator,
   DropdownLabel,
   DropdownSubmenu,
-} from './Dropdown/Dropdown.jsx'
+} from './Dropdown/Dropdown'
 
 // Form Components
-export { Input } from './Form/Form.jsx'
-export { Textarea } from './Textarea/Textarea.jsx'
-export { FileUpload } from './FileUpload/FileUpload.jsx'
+export { Input } from './Form/Form'
+export { Textarea } from './Textarea/Textarea'
+export { FileUpload } from './FileUpload/FileUpload'
 
 // Feedback & Status
-export { Spinner } from './Loading/Spinner.jsx'
-export { Skeleton } from './Skeleton/Skeleton.jsx'
-export { EmptyState } from './EmptyState/EmptyState.jsx'
-export { Toast, Toaster } from './Toast/Toaster.jsx'
-export { ProgressBar, CircularProgress } from './ProgressBar/ProgressBar.jsx'
+export { Spinner } from './Loading/Spinner'
+export { Skeleton } from './Skeleton/Skeleton'
+export { EmptyState } from './EmptyState/EmptyState'
+export { Toast, Toaster } from './Toast/Toaster'
+export { ProgressBar, CircularProgress } from './ProgressBar/ProgressBar'
 
 // Navigation
-export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs/Tabs.jsx'
-export { Pagination, SimplePagination } from './Pagination/Pagination.jsx'
-export { CommandPalette, useCommandPalette } from './CommandPalette/CommandPalette.jsx'
+export { Tabs, TabsList, TabsTrigger, TabsContent } from './Tabs/Tabs'
+export { Pagination, SimplePagination } from './Pagination/Pagination'
+export { CommandPalette, useCommandPalette } from './CommandPalette/CommandPalette'
 
 // Dashboard Components
-export { StatCard } from './Dashboard/StatCard.jsx'
-export { WelcomeCard } from './Dashboard/WelcomeCard.jsx'
-export { QuickActions } from './Dashboard/QuickActions.jsx'
-export { RecentActivityList } from './Dashboard/RecentActivityList.jsx'
-export { DataTable } from './Dashboard/DataTable.jsx'
-export { MobileTable } from './Dashboard/MobileTable.jsx'
-export { FiltersBar } from './Dashboard/FiltersBar.jsx'
-export { BulkActions } from './Dashboard/BulkActions.jsx'
-export { MetricCard, MetricGroup, CompactMetric } from './MetricCard/MetricCard.jsx'
+export { StatCard } from './Dashboard/StatCard'
+export { WelcomeCard } from './Dashboard/WelcomeCard'
+export { QuickActions } from './Dashboard/QuickActions'
+export { RecentActivityList } from './Dashboard/RecentActivityList'
+export { DataTable } from './Dashboard/DataTable'
+export { MobileTable } from './Dashboard/MobileTable'
+export { FiltersBar } from './Dashboard/FiltersBar'
+export { BulkActions } from './Dashboard/BulkActions'
+export { MetricCard, MetricGroup, CompactMetric } from './MetricCard/MetricCard'
 
 // User Settings
 export {
   UserSettings,
   SettingsSection,
   SettingsRow,
-} from './UserSettings/UserSettings.jsx'
-export { ProfileSettings } from './UserSettings/ProfileSettings.jsx'
-export { SecuritySettings } from './UserSettings/SecuritySettings.jsx'
-export { NotificationSettings } from './UserSettings/NotificationSettings.jsx'
-export { PreferencesSettings } from './UserSettings/PreferencesSettings.jsx'
+} from './UserSettings/UserSettings'
+export { ProfileSettings } from './UserSettings/ProfileSettings'
+export { SecuritySettings } from './UserSettings/SecuritySettings'
+export { NotificationSettings } from './UserSettings/NotificationSettings'
+export { PreferencesSettings } from './UserSettings/PreferencesSettings'
 
 // Onboarding
-export { OnboardingWizard } from './Onboarding/OnboardingWizard.jsx'
-export { GuidedTour } from './Onboarding/GuidedTour.jsx'
-export { ProgressChecklist } from './Onboarding/ProgressChecklist.jsx'
+export { OnboardingWizard } from './Onboarding/OnboardingWizard'
+export { GuidedTour } from './Onboarding/GuidedTour'
+export { ProgressChecklist } from './Onboarding/ProgressChecklist'
 
 // Auth & Security
-export { ProtectedRoute } from './ProtectedRoute/ProtectedRoute.jsx'
-export { TwoFactorSetup } from './TwoFactor/TwoFactorSetup.jsx'
-export { OAuthButtons } from './OAuthButtons/OAuthButtons.jsx'
+export { ProtectedRoute } from './ProtectedRoute/ProtectedRoute'
+export { TwoFactorSetup } from './TwoFactor/TwoFactorSetup'
+export { OAuthButtons } from './OAuthButtons/OAuthButtons'
 
 // Marketing Components
-export { FeaturesSection } from './FeaturesSection/FeaturesSection.jsx'
-export { TestimonialsSection } from './TestimonialsSection/TestimonialsSection.jsx'
-export { Footer } from './Footer/Footer.jsx'
-export { AnnouncementBanner } from './AnnouncementBanner/AnnouncementBanner.jsx'
+export { FeaturesSection } from './FeaturesSection/FeaturesSection'
+export { TestimonialsSection } from './TestimonialsSection/TestimonialsSection'
+export { Footer } from './Footer/Footer'
+export { AnnouncementBanner } from './AnnouncementBanner/AnnouncementBanner'
 
 // Tables
-export { Table } from './Table/Table.jsx'
-export { ResponsiveTable } from './Table/ResponsiveTable.jsx'
+export { Table } from './Table/Table'
+export { ResponsiveTable } from './Table/ResponsiveTable'
 
 // Misc
-export { NotificationCenter } from './NotificationCenter/NotificationCenter.jsx'
-export { BottomSheet } from './BottomSheet/BottomSheet.jsx'
+export { NotificationCenter } from './NotificationCenter/NotificationCenter'
+export { BottomSheet } from './BottomSheet/BottomSheet'

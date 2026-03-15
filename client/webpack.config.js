@@ -156,13 +156,6 @@ export default {
   // ─── Module Rules ────────────────────────────────────────────────────────────
   module: {
     rules: [
-      // Disable fullySpecified for all source files so ESM files can import without extensions
-      {
-        test: /\.[jt]sx?$/,
-        resolve: {
-          fullySpecified: false,
-        },
-      },
       // TypeScript / TSX / JSX
       {
         test: /\.[jt]sx?$/,
@@ -251,17 +244,13 @@ export default {
       }),
 
     // TypeScript type checking in a separate process (non-blocking)
-    // Disabled for production builds to avoid blocking on type errors
-    ...(isDev
-      ? [
-          new ForkTsCheckerWebpackPlugin({
-            async: true,
-            typescript: {
-              configFile: path.resolve(__dirname, 'tsconfig.json'),
-            },
-          }),
-        ]
-      : []),
+    // Type checking only in dev — babel handles TS transpilation in prod
+    isDev && new ForkTsCheckerWebpackPlugin({
+      async: true,
+      typescript: {
+        configFile: path.resolve(__dirname, 'tsconfig.json'),
+      },
+    }),
 
     // Environment variables available in browser bundle
     new webpack.DefinePlugin({

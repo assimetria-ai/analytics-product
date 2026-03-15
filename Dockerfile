@@ -61,13 +61,25 @@ COPY server/package*.json ./server/
 # Built frontend assets (served by Express as static files or a CDN)
 # Server looks for static files at server/src/../public = server/public
 COPY --from=client-build /app/client/dist ./server/public
+<<<<<<< HEAD
 COPY landing.html ./server/public/landing.html
+=======
+
+# Favicon files (copied from client/public, not included in webpack build)
+COPY client/public/favicon* ./server/public/
+# Landing page: copy landing.html into server/public/ so Express serves it at /
+# instead of the SPA shell. Real landing pages are synced from the OS brands
+# directory by sync-landing-pages.sh. The template ships a default fallback
+# that redirects to /app (the SPA). (task #12051)
+COPY landing.html ./server/public/landing.html
+
+>>>>>>> b5c993f733f2c8d639b6d7226334d941846b974b
 RUN chown -R appuser:appgroup /app
 USER appuser
 
 ENV NODE_ENV=production \
     PORT=4000 \
-    STATIC_DIR=/app/public
+    STATIC_DIR=/app/server/public
 
 EXPOSE 4000
 
