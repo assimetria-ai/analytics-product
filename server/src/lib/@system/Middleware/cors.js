@@ -1,3 +1,4 @@
+// @system CORS middleware — verified 2026-03-15
 const cors = require('cors')
 
 const ALLOWED_ORIGINS = [
