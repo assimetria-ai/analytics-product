@@ -244,7 +244,8 @@ export default {
       }),
 
     // TypeScript type checking in a separate process (non-blocking)
-    new ForkTsCheckerWebpackPlugin({
+    // Type checking only in dev — babel handles TS transpilation in prod
+    isDev && new ForkTsCheckerWebpackPlugin({
       async: true,
       typescript: {
         configFile: path.resolve(__dirname, 'tsconfig.json'),
