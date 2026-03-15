@@ -16,38 +16,6 @@ const { doubleCsrf } = require('csrf-csrf')
  *   - Expose generateCsrfToken() via a GET endpoint so clients can fetch the token
  *   - Clients must include the token in the X-CSRF-Token header for protected requests
  */
-/**
- * Routes exempt from CSRF validation (path as seen by Express after /api mount).
- * Auth routes (register/login/refresh/password-reset) are called before the client
- * has a session cookie, so CSRF protection doesn't apply — there's no cookie to steal.
- * Webhook and embed/ingest routes receive server-to-server calls that can't carry CSRF tokens.
- */
-const CSRF_EXEMPT_PATHS = [
-  '/users',              // POST /api/users — register
-  '/sessions',           // POST /api/sessions — login
-  '/sessions/refresh',   // POST /api/sessions/refresh — token rotation
-  '/users/password/request',  // POST /api/users/password/request — forgot password
-  '/users/password/reset',    // POST /api/users/password/reset — reset password
-  '/users/email/verify',      // POST /api/users/email/verify — verify email
-  '/users/email/verify/request', // POST /api/users/email/verify/request — resend verification
-  '/auth/',              // OAuth routes (GET but listed for completeness)
-  '/webhook',            // Server-to-server webhook callbacks
-  '/embed/',             // Embed script data ingestion
-]
-
-/**
- * Check whether a request targets a CSRF-exempt path.
- * Used both by the wrapper middleware AND by the library's skipCsrfProtection
- * hook as a belt-and-suspenders approach: even if one layer fails, the other
- * will skip validation for auth/webhook routes.
- */
-function isExemptPath(req) {
-  // When mounted with app.use('/api', ...), req.path is relative (e.g. '/sessions').
-  // When accessed via req.originalUrl, it includes the mount prefix.
-  const path = req.path || ''
-  return CSRF_EXEMPT_PATHS.some(p => path === p || path.startsWith(p))
-}
-
 const {
   generateCsrfToken: _generateCsrfToken, // Generate a new CSRF token
   doubleCsrfProtection                    // Middleware to validate CSRF tokens
@@ -69,17 +37,28 @@ const {
     // not on session identification
     return req.sessionID || req.session?.id || ''
   },
-  // Library-level skip for exempt paths (belt-and-suspenders with wrapper check)
-  skipCsrfProtection: isExemptPath,
 })
 
 /**
- * CSRF protection middleware that validates tokens on state-changing requests.
- * NOTE: This middleware is mounted at /api, so req.path has the /api prefix stripped.
- *
- * Two layers of exemption:
- * 1. Wrapper check (isExemptPath) — skips calling the library entirely
- * 2. Library skipCsrfProtection hook — catches any edge case where the wrapper is bypassed
+ * Routes exempt from CSRF validation.
+ * Auth routes (register/login/forgot-password) are called before the client
+ * has a session, so CSRF protection doesn't apply — there's no cookie to steal.
+ * Webhook routes receive server-to-server calls that can't carry CSRF tokens.
+ */
+const CSRF_EXEMPT_PATHS = [
+  '/api/auth/register',
+  '/api/auth/login',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password',
+  '/api/auth/refresh',
+  '/api/sessions',
+  '/api/sessions/refresh',
+  '/api/sessions/register',
+  '/api/webhook',
+]
+
+/**
+ * CSRF protection middleware that validates tokens on state-changing requests
  */
 const csrfProtection = (req, res, next) => {
   // Skip CSRF validation in test/development environments if needed
@@ -88,7 +67,7 @@ const csrfProtection = (req, res, next) => {
   }
 
   // Skip CSRF for auth and webhook routes (no session to protect)
-  if (isExemptPath(req)) {
+  if (CSRF_EXEMPT_PATHS.some(p => req.path.startsWith(p.replace('/api', '')))) {
     return next()
   }
 
