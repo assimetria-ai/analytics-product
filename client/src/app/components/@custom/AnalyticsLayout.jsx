@@ -14,7 +14,7 @@ import {
   Menu,
 } from 'lucide-react'
 import { Sidebar, SidebarLogo, SidebarSection, SidebarItem } from '../@system/Sidebar/Sidebar'
-import { info } from '@/config/@system/info'
+import { info } from '@/config'
 import { cn } from '@/app/lib/@system/utils'
 
 const NAV_ITEMS = [
