@@ -2,7 +2,7 @@
  * @custom Migration: Blog settings
  * Key/value store for blog theme and display settings.
  */
-const db = require('../../repos/@system/db-instance')
+const db = require('../../../lib/@system/PostgreSQL')
 
 async function up() {
   await db.none(`

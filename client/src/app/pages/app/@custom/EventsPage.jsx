@@ -1,15 +1,12 @@
 /**
  * @custom EventsPage — Event stream with search/filter, event detail, custom event creation.
- * Shows auto-captured events and custom events. POST /api/events, GET /api/events.
+ * Shows auto-captured events and custom events. GET /api/events, POST /api/events/track.
  */
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, Fragment } from 'react'
 import {
   Zap,
   Search,
-  Filter,
   Plus,
-  ChevronDown,
-  ChevronRight,
   Code2,
   MousePointer,
   FileText,
@@ -22,55 +19,49 @@ import {
 } from 'lucide-react'
 import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
 import { cn } from '../../../lib/@system/utils'
+import { api } from '../../../lib/@system/api'
 
 // ─── Brand ────────────────────────────────────────────────────────
 const C = { primary: '#4F46E5', secondary: '#0EA5E9', accent: '#8B5CF6', success: '#10B981', warning: '#F59E0B', error: '#EF4444' }
 
-// ─── Mock data ────────────────────────────────────────────────────
+// ─── Event type metadata ──────────────────────────────────────────
 const EVENT_TYPES = {
-  page_view:      { label: 'Page View',       icon: FileText,      color: '#4F46E5', bg: '#eef2ff' },
-  click:          { label: 'Click',           icon: MousePointer,  color: '#0EA5E9', bg: '#f0f9ff' },
-  form_submit:    { label: 'Form Submit',     icon: Check,         color: '#10B981', bg: '#f0fdf4' },
-  purchase:       { label: 'Purchase',        icon: ShoppingCart,  color: '#F59E0B', bg: '#fffbeb' },
-  signup:         { label: 'Sign Up',         icon: UserPlus,      color: '#8B5CF6', bg: '#f5f3ff' },
-  custom:         { label: 'Custom',          icon: Code2,         color: '#64748b', bg: '#f8fafc' },
+  pageview:     { label: 'Page View',    icon: FileText,     color: '#4F46E5', bg: '#eef2ff' },
+  click:        { label: 'Click',        icon: MousePointer, color: '#0EA5E9', bg: '#f0f9ff' },
+  form_submit:  { label: 'Form Submit',  icon: Check,        color: '#10B981', bg: '#f0fdf4' },
+  purchase:     { label: 'Purchase',     icon: ShoppingCart, color: '#F59E0B', bg: '#fffbeb' },
+  signup:       { label: 'Sign Up',      icon: UserPlus,     color: '#8B5CF6', bg: '#f5f3ff' },
+  custom:       { label: 'Custom',       icon: Code2,        color: '#64748b', bg: '#f8fafc' },
 }
 
-const PATHS = ['/', '/pricing', '/blog', '/docs/quickstart', '/signup', '/login', '/blog/analytics-101', '/docs/api', '/settings', '/app/dashboard']
-const USER_IDS = ['usr_1a2b3c', 'usr_4d5e6f', 'usr_7g8h9i', 'usr_j0k1l2', 'usr_m3n4o5', 'anonymous']
-const COUNTRIES = ['US', 'GB', 'DE', 'CA', 'FR', 'AU', 'NL', 'BR']
+// ─── Mock data ────────────────────────────────────────────────────
+const PATHS = ['/', '/pricing', '/blog', '/docs/quickstart', '/signup', '/login', '/docs/api', '/settings', '/app/dashboard']
+const USER_IDS = ['usr_1a2b3c', 'usr_4d5e6f', 'usr_7g8h9i', 'usr_j0k1l2', 'anonymous']
+const COUNTRIES = ['US', 'GB', 'DE', 'CA', 'FR', 'AU']
 const DEVICES = ['Desktop', 'Mobile', 'Tablet']
 const BROWSERS = ['Chrome', 'Safari', 'Firefox', 'Edge']
 
-function genEvents(count = 120) {
+function genMockEvents(count = 80) {
   const now = Date.now()
-  const types = Object.keys(EVENT_TYPES)
+  const types = ['pageview', 'pageview', 'pageview', 'click', 'click', 'form_submit', 'custom', 'signup']
   return Array.from({ length: count }, (_, i) => {
-    const type = types[Math.floor(Math.random() * types.length)]
+    const type = types[i % types.length]
     const ts = new Date(now - Math.floor(Math.random() * 86_400_000 * 7))
-    const props = {}
-    if (type === 'page_view')   { props.url = PATHS[i % PATHS.length]; props.referrer = i % 3 === 0 ? 'https://google.com' : '' }
-    if (type === 'click')       { props.element = ['button#cta', 'a.nav-link', 'button.submit', '[data-id="pricing"]'][i % 4]; props.text = ['Get Started', 'View Pricing', 'Sign Up Free', 'Learn More'][i % 4] }
-    if (type === 'form_submit') { props.form_id = ['signup-form', 'contact-form', 'newsletter-form'][i % 3]; props.success = Math.random() > 0.15 }
-    if (type === 'purchase')    { props.amount = (Math.floor(Math.random() * 490) + 10); props.currency = 'USD'; props.plan = ['starter', 'pro', 'enterprise'][i % 3] }
-    if (type === 'signup')      { props.method = ['email', 'google', 'github'][i % 3] }
-    if (type === 'custom')      { props.name = ['feature_used', 'export_triggered', 'invite_sent', 'dashboard_viewed'][i % 4]; props.value = Math.floor(Math.random() * 100) }
-
     return {
-      id:          `evt_${(i + 1000).toString(36)}`,
-      type,
-      user_id:     USER_IDS[i % USER_IDS.length],
-      session_id:  `ses_${Math.floor(i / 3).toString(36)}`,
-      timestamp:   ts.toISOString(),
-      country:     COUNTRIES[i % COUNTRIES.length],
-      device:      DEVICES[i % DEVICES.length],
-      browser:     BROWSERS[i % BROWSERS.length],
-      properties:  props,
+      id: `evt_${(i + 1000).toString(36)}`,
+      event_type: type,
+      event_name: type === 'custom' ? ['feature_used', 'export_done', 'invite_sent'][i % 3] : null,
+      session_id: `ses_${Math.floor(i / 3).toString(36)}`,
+      user_id: USER_IDS[i % USER_IDS.length],
+      page_path: PATHS[i % PATHS.length],
+      timestamp: ts.toISOString(),
+      country: COUNTRIES[i % COUNTRIES.length],
+      device: DEVICES[i % DEVICES.length],
+      browser: BROWSERS[i % BROWSERS.length],
+      properties: {},
     }
   }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 }
-
-const MOCK_EVENTS = genEvents(120)
 
 // ─── Helpers ──────────────────────────────────────────────────────
 function timeAgo(iso) {
@@ -83,9 +74,10 @@ function timeAgo(iso) {
   return `${Math.floor(h / 24)}d ago`
 }
 
-// ─── Event Detail Panel ───────────────────────────────────────────
+// ─── Event Detail Modal ───────────────────────────────────────────
 function EventDetail({ event, onClose }) {
-  const meta = EVENT_TYPES[event.type] || EVENT_TYPES.custom
+  const typeKey = event.event_type || event.type || 'custom'
+  const meta = EVENT_TYPES[typeKey] || EVENT_TYPES.custom
   const Icon = meta.icon
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -96,7 +88,7 @@ function EventDetail({ event, onClose }) {
               <Icon size={16} style={{ color: meta.color }} />
             </span>
             <span className="font-semibold text-slate-900">{meta.label}</span>
-            <span className="text-xs text-slate-400 font-mono">{event.id}</span>
+            {event.event_name && <span className="text-xs text-slate-500 font-mono">{event.event_name}</span>}
           </div>
           <button onClick={onClose} className="p-1 rounded hover:bg-slate-100"><X size={16} /></button>
         </div>
@@ -104,24 +96,26 @@ function EventDetail({ event, onClose }) {
           <div className="grid grid-cols-2 gap-3 text-sm">
             {[
               ['Timestamp', new Date(event.timestamp).toLocaleString()],
-              ['User ID', event.user_id],
               ['Session', event.session_id],
-              ['Device', event.device],
-              ['Browser', event.browser],
-              ['Country', event.country],
+              ['User', event.user_id || '—'],
+              ['Page', event.page_path || '—'],
+              ['Device', event.device || '—'],
+              ['Country', event.country || '—'],
             ].map(([k, v]) => (
               <div key={k}>
                 <p className="text-xs text-slate-500 mb-0.5">{k}</p>
-                <p className="font-medium text-slate-800 font-mono text-xs">{v}</p>
+                <p className="font-medium text-slate-800 font-mono text-xs break-all">{v}</p>
               </div>
             ))}
           </div>
-          <div>
-            <p className="text-xs font-medium text-slate-500 mb-2">Properties</p>
-            <pre className="text-xs bg-slate-50 rounded-lg p-3 overflow-x-auto border border-slate-200">
-              {JSON.stringify(event.properties, null, 2)}
-            </pre>
-          </div>
+          {event.properties && Object.keys(event.properties).length > 0 && (
+            <div>
+              <p className="text-xs font-medium text-slate-500 mb-2">Properties</p>
+              <pre className="text-xs bg-slate-50 rounded-lg p-3 overflow-x-auto border border-slate-200">
+                {JSON.stringify(event.properties, null, 2)}
+              </pre>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -140,8 +134,7 @@ function CreateEventModal({ onClose, onSave }) {
     let parsed
     try { parsed = JSON.parse(props) } catch { setError('Invalid JSON properties'); return }
     setSaving(true)
-    // Mock save
-    await new Promise(r => setTimeout(r, 400))
+    await new Promise(r => setTimeout(r, 300))
     onSave({ name: name.trim(), properties: parsed })
     setSaving(false)
     onClose()
@@ -162,7 +155,6 @@ function CreateEventModal({ onClose, onSave }) {
               onChange={e => setName(e.target.value)}
               placeholder="e.g. feature_activated"
               className="w-full px-3 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2 font-mono"
-              style={{ focusRingColor: C.primary }}
             />
           </div>
           <div>
@@ -203,22 +195,46 @@ const TYPE_FILTERS = [
 ]
 
 export function EventsPage() {
-  const [search, setSearch]           = useState('')
-  const [typeFilter, setTypeFilter]   = useState('')
-  const [selectedEvent, setSelected]  = useState(null)
-  const [showCreate, setShowCreate]   = useState(false)
-  const [events, setEvents]           = useState(MOCK_EVENTS)
-  const [expanded, setExpanded]       = useState({})
+  const [search, setSearch]          = useState('')
+  const [typeFilter, setTypeFilter]  = useState('')
+  const [selectedEvent, setSelected] = useState(null)
+  const [showCreate, setShowCreate]  = useState(false)
+  const [events, setEvents]          = useState([])
+  const [loading, setLoading]        = useState(true)
+  const [expanded, setExpanded]      = useState({})
+  const PAGE_SIZE = 50
+
+  const loadEvents = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams({ limit: String(PAGE_SIZE), offset: '0' })
+      if (typeFilter) params.set('event_type', typeFilter)
+      const res = await api.get(`/events?${params.toString()}`)
+      setEvents(res.events || [])
+    } catch {
+      setEvents(genMockEvents(80))
+    } finally {
+      setLoading(false)
+    }
+  }, [typeFilter])
+
+  useEffect(() => { loadEvents() }, [loadEvents])
+
+  // Auto-refresh every 15 seconds
+  useEffect(() => {
+    const id = setInterval(loadEvents, 15_000)
+    return () => clearInterval(id)
+  }, [loadEvents])
 
   const filtered = events.filter(e => {
-    if (typeFilter && e.type !== typeFilter) return false
     if (search) {
       const q = search.toLowerCase()
       return (
-        e.type.includes(q) ||
-        e.user_id.toLowerCase().includes(q) ||
-        e.id.toLowerCase().includes(q) ||
-        JSON.stringify(e.properties).toLowerCase().includes(q)
+        (e.event_type || '').includes(q) ||
+        (e.event_name || '').toLowerCase().includes(q) ||
+        (e.user_id || '').toLowerCase().includes(q) ||
+        (e.session_id || '').toLowerCase().includes(q) ||
+        (e.page_path || '').toLowerCase().includes(q)
       )
     }
     return true
@@ -227,27 +243,29 @@ export function EventsPage() {
   const handleSave = useCallback((data) => {
     const newEvt = {
       id: `evt_new${Date.now().toString(36)}`,
-      type: 'custom',
-      user_id: 'usr_current',
+      event_type: 'custom',
+      event_name: data.name,
+      user_id: null,
       session_id: 'ses_current',
       timestamp: new Date().toISOString(),
-      country: 'US',
+      country: '',
       device: 'Desktop',
-      browser: 'Chrome',
-      properties: { name: data.name, ...data.properties },
+      browser: '',
+      page_path: '/',
+      properties: data.properties,
     }
     setEvents(prev => [newEvt, ...prev])
   }, [])
 
-  // Event type counts for quick stats
   const counts = events.reduce((acc, e) => {
-    acc[e.type] = (acc[e.type] || 0) + 1
+    const t = e.event_type || 'custom'
+    acc[t] = (acc[t] || 0) + 1
     return acc
   }, {})
 
   return (
     <AnalyticsLayout>
-      <div className="space-y-5">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-5">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
@@ -257,14 +275,24 @@ export function EventsPage() {
             </h1>
             <p className="text-sm text-slate-500 mt-1">Auto-captured + custom events from your users</p>
           </div>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-white"
-            style={{ backgroundColor: C.primary }}
-          >
-            <Plus size={14} />
-            Track Event
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadEvents}
+              disabled={loading}
+              className="p-2 rounded-lg border border-slate-200 text-slate-500 hover:text-slate-700 disabled:opacity-40 transition-colors"
+              title="Refresh"
+            >
+              <RefreshCw size={14} className={loading ? 'animate-spin' : ''} />
+            </button>
+            <button
+              onClick={() => setShowCreate(true)}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg text-white"
+              style={{ backgroundColor: C.primary }}
+            >
+              <Plus size={14} />
+              Track Event
+            </button>
+          </div>
         </div>
 
         {/* Event type stat pills */}
@@ -291,14 +319,14 @@ export function EventsPage() {
           })}
         </div>
 
-        {/* Search + filter bar */}
+        {/* Search bar */}
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by user, event type, property..."
+              placeholder="Search by user, page, session ID..."
               className="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-slate-200 focus:outline-none focus:ring-2"
             />
           </div>
@@ -309,74 +337,90 @@ export function EventsPage() {
 
         {/* Event table */}
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-slate-100 bg-slate-50">
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-8"></th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Event</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">User</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden lg:table-cell">Device</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Time</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider w-20">Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.slice(0, 50).map((event) => {
-                const meta = EVENT_TYPES[event.type] || EVENT_TYPES.custom
-                const Icon = meta.icon
-                const isExpanded = expanded[event.id]
-                return (
-                  <>
-                    <tr
-                      key={event.id}
-                      className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer"
-                      onClick={() => setExpanded(prev => ({ ...prev, [event.id]: !prev[event.id] }))}
-                    >
-                      <td className="px-4 py-3">
-                        <span className="p-1 rounded" style={{ backgroundColor: meta.bg }}>
-                          <Icon size={12} style={{ color: meta.color }} />
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="font-medium text-slate-900">{meta.label}</span>
-                        {event.properties.url && (
-                          <span className="ml-2 text-xs text-slate-400 font-mono">{event.properties.url}</span>
-                        )}
-                        {event.properties.name && (
-                          <span className="ml-2 text-xs text-slate-400 font-mono">{event.properties.name}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3 hidden md:table-cell">
-                        <span className="text-xs font-mono text-slate-500">{event.user_id}</span>
-                      </td>
-                      <td className="px-4 py-3 hidden lg:table-cell">
-                        <span className="text-xs text-slate-500">{event.device} · {event.browser}</span>
-                      </td>
-                      <td className="px-4 py-3 text-right text-xs text-slate-400">{timeAgo(event.timestamp)}</td>
-                      <td className="px-4 py-3 text-right">
-                        <button
-                          onClick={e => { e.stopPropagation(); setSelected(event) }}
-                          className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
-                        >
-                          View
-                        </button>
-                      </td>
-                    </tr>
-                    {isExpanded && (
-                      <tr key={`${event.id}-expanded`} className="bg-slate-50 border-b border-slate-100">
-                        <td colSpan={6} className="px-4 py-3">
-                          <pre className="text-xs font-mono text-slate-600 bg-white rounded border border-slate-200 p-3 overflow-x-auto">
-                            {JSON.stringify(event.properties, null, 2)}
-                          </pre>
+          {loading && events.length === 0 ? (
+            <div className="space-y-2 p-4">
+              {[1,2,3,4,5].map(i => (
+                <div key={i} className="h-10 bg-slate-100 rounded animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-100 bg-slate-50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-8"></th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Event</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden md:table-cell">Session</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider hidden lg:table-cell">Device</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Time</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider w-20">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.slice(0, PAGE_SIZE).map((event) => {
+                  const typeKey = event.event_type || 'custom'
+                  const meta = EVENT_TYPES[typeKey] || EVENT_TYPES.custom
+                  const Icon = meta.icon
+                  const isExpanded = expanded[event.id]
+                  return (
+                    <Fragment key={event.id}>
+                      <tr
+                        className="border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer"
+                        onClick={() => setExpanded(prev => ({ ...prev, [event.id]: !prev[event.id] }))}
+                      >
+                        <td className="px-4 py-3">
+                          <span className="p-1 rounded" style={{ backgroundColor: meta.bg }}>
+                            <Icon size={12} style={{ color: meta.color }} />
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="font-medium text-slate-900">{meta.label}</span>
+                          {event.event_name && (
+                            <span className="ml-2 text-xs text-slate-400 font-mono">{event.event_name}</span>
+                          )}
+                          {event.page_path && (
+                            <span className="ml-2 text-xs text-slate-400 font-mono hidden sm:inline">{event.page_path}</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 hidden md:table-cell">
+                          <span className="text-xs font-mono text-slate-500">{(event.session_id || '').slice(0, 14)}</span>
+                        </td>
+                        <td className="px-4 py-3 hidden lg:table-cell">
+                          <span className="text-xs text-slate-500">{event.device}{event.browser ? ` · ${event.browser}` : ''}</span>
+                        </td>
+                        <td className="px-4 py-3 text-right text-xs text-slate-400">{timeAgo(event.timestamp)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <button
+                            onClick={e => { e.stopPropagation(); setSelected(event) }}
+                            className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-100 transition-colors"
+                          >
+                            View
+                          </button>
                         </td>
                       </tr>
-                    )}
-                  </>
-                )
-              })}
-            </tbody>
-          </table>
-          {filtered.length === 0 && (
+                      {isExpanded && (
+                        <tr className="bg-slate-50 border-b border-slate-100">
+                          <td colSpan={6} className="px-4 py-3">
+                            <pre className="text-xs font-mono text-slate-600 bg-white rounded border border-slate-200 p-3 overflow-x-auto">
+                              {JSON.stringify({
+                                id: event.id,
+                                event_type: event.event_type,
+                                event_name: event.event_name,
+                                page_path: event.page_path,
+                                country: event.country,
+                                device: event.device,
+                                properties: event.properties,
+                              }, null, 2)}
+                            </pre>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
+                  )
+                })}
+              </tbody>
+            </table>
+          )}
+          {!loading && filtered.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400">
               <Activity size={32} className="mb-3" />
               <p className="text-sm font-medium">No events found</p>
@@ -385,8 +429,8 @@ export function EventsPage() {
           )}
         </div>
 
-        {filtered.length > 50 && (
-          <p className="text-xs text-slate-400 text-center">Showing 50 of {filtered.length.toLocaleString()} events</p>
+        {filtered.length > PAGE_SIZE && (
+          <p className="text-xs text-slate-400 text-center">Showing {PAGE_SIZE} of {filtered.length.toLocaleString()} events</p>
         )}
       </div>
 

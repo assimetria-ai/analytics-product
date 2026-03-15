@@ -4,7 +4,7 @@
  * Stores sites, pageviews, sessions, raw events, and funnel configs.
  * api_keys already created in 003_api_keys.js — not re-created here.
  */
-const db = require('../../repos/@system/db-instance')
+const db = require('../../../lib/@system/PostgreSQL')
 
 async function up() {
   await db.none(`

@@ -318,7 +318,7 @@ export function ErrorTrackingPage() {
           <div className="relative">
             <select
               value={levelFilter}
-              onChange={(e) => { setLevelFilter(e.target.value | ''); setPage(0) }}
+              onChange={(e) => { setLevelFilter(e.target.value || ''); setPage(0) }}
               className="appearance-none pl-8 pr-8 py-1.5 text-sm rounded-md border border-border bg-background text-foreground cursor-pointer hover:bg-muted focus:outline-none"
             >
               {LEVEL_OPTIONS.map((o) => (

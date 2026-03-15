@@ -5,11 +5,6 @@ import { FunnelsPage } from '../../pages/app/@custom/FunnelsPage'
 import { UserSessionsPage } from '../../pages/app/@custom/UserSessionsPage'
 import { ErrorTrackingPage } from '../../pages/app/@custom/ErrorTrackingPage'
 import { CollaboratorsPage } from '../../pages/app/@custom/CollaboratorsPage'
-import { BrandSettingsPage } from '../../pages/app/@custom/BrandSettingsPage'
-import { ChatbasePage } from '../../pages/app/@custom/ChatbasePage'
-import { EmailTrackingPage } from '../../pages/app/@custom/EmailTrackingPage'
-import { EmailPreviewPage } from '../../pages/app/@custom/EmailPreviewPage'
-import { ClipLibraryPage } from '../../pages/app/@custom/ClipLibraryPage'
 import { TeamsPage } from '../../pages/app/@custom/TeamsPage'
 import { TeamDetailPage } from '../../pages/app/@custom/TeamDetailPage'
 import { EventsPage } from '../../pages/app/@custom/EventsPage'
@@ -39,20 +34,20 @@ export const customRoutes = [
     }
   />,
   <Route
+    key="events"
+    path="/app/events"
+    element={
+      <PrivateRoute>
+        <EventsPage />
+      </PrivateRoute>
+    }
+  />,
+  <Route
     key="funnels"
     path="/app/funnels"
     element={
       <PrivateRoute>
         <FunnelsPage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="user-sessions"
-    path="/app/sessions"
-    element={
-      <PrivateRoute>
-        <UserSessionsPage />
       </PrivateRoute>
     }
   />,
@@ -66,56 +61,29 @@ export const customRoutes = [
     }
   />,
   <Route
-    key="collaborators"
-    path="/app/collaborators"
+    key="user-sessions"
+    path="/app/sessions"
     element={
       <PrivateRoute>
-        <CollaboratorsPage />
+        <UserSessionsPage />
       </PrivateRoute>
     }
   />,
   <Route
-    key="brand-settings"
-    path="/app/brand"
+    key="embed"
+    path="/app/embed"
     element={
       <PrivateRoute>
-        <BrandSettingsPage />
+        <EmbedScriptPage />
       </PrivateRoute>
     }
   />,
   <Route
-    key="chatbase"
-    path="/app/chatbase"
+    key="api-access"
+    path="/app/api-access"
     element={
       <PrivateRoute>
-        <ChatbasePage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="email-tracking"
-    path="/app/emails"
-    element={
-      <PrivateRoute role="admin">
-        <EmailTrackingPage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="email-preview"
-    path="/app/emails/preview"
-    element={
-      <PrivateRoute role="admin">
-        <EmailPreviewPage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="clip-library"
-    path="/app/library"
-    element={
-      <PrivateRoute>
-        <ClipLibraryPage />
+        <ApiAccessPage />
       </PrivateRoute>
     }
   />,
@@ -138,29 +106,11 @@ export const customRoutes = [
     }
   />,
   <Route
-    key="events"
-    path="/app/events"
+    key="collaborators"
+    path="/app/collaborators"
     element={
       <PrivateRoute>
-        <EventsPage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="embed"
-    path="/app/embed"
-    element={
-      <PrivateRoute>
-        <EmbedScriptPage />
-      </PrivateRoute>
-    }
-  />,
-  <Route
-    key="api-access"
-    path="/app/api-access"
-    element={
-      <PrivateRoute>
-        <ApiAccessPage />
+        <CollaboratorsPage />
       </PrivateRoute>
     }
   />,

@@ -2,7 +2,7 @@
  * @custom Migration: Blog categories
  * Standalone category table for organising blog posts.
  */
-const db = require('../../repos/@system/db-instance')
+const db = require('../../../lib/@system/PostgreSQL')
 
 async function up() {
   await db.none(`

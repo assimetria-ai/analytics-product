@@ -5,7 +5,7 @@
  * campaign_metrics, automations, automation_steps, landing_pages,
  * ab_tests, ab_test_variants, import_jobs
  */
-const db = require('../../repos/@system/db-instance')
+const db = require('../../../lib/@system/PostgreSQL')
 
 async function up() {
   await db.none(`

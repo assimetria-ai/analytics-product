@@ -24,4 +24,9 @@ router.use(require('../../api/@custom/funnels'))
 router.use(require('../../api/@custom/sessions'))
 router.use(require('../../api/@custom/embed'))
 
+// BlogKit MVP routes (Phase 9)
+router.use(require('../../api/@custom/seo'))
+router.use(require('../../api/@custom/rss'))
+router.use(require('../../api/@custom/blog-analytics'))
+
 module.exports = router

@@ -2,7 +2,7 @@
  * @custom Migration: Blog SEO + management columns
  * Adds SEO fields, featured, scheduled_at, archived_at to blog_posts.
  */
-const db = require('../../repos/@system/db-instance')
+const db = require('../../../lib/@system/PostgreSQL')
 
 async function up() {
   await db.none(`

@@ -1,36 +1,35 @@
-// @custom — Analytics Product feature descriptions for landing page
-// These override the template defaults in @system/FeaturesSection
-import { BarChart3, Shield, Zap, Eye, Database, LineChart } from 'lucide-react'
+// @custom — Support Product feature descriptions for landing page
+import { MessageSquare, Bot, Ticket, BookOpen, Users, Inbox } from 'lucide-react'
 
 export const customFeatures = [
   {
-    icon: BarChart3,
-    title: 'Real-time Analytics',
-    description: 'Track page views, sessions, and custom events as they happen. No sampling, no delays.',
+    icon: MessageSquare,
+    title: 'Chat Widget',
+    description: 'Embed a live chat widget on your site in minutes. Customise colors, greetings, and office hours.',
   },
   {
-    icon: Shield,
-    title: 'Privacy-first',
-    description: 'No third-party cookies. GDPR-compliant by default. Your users\' data stays yours.',
+    icon: Bot,
+    title: 'AI Auto-Reply',
+    description: 'GPT-powered replies that resolve common questions instantly, 24/7, without a human agent.',
   },
   {
-    icon: Zap,
-    title: 'Lightweight Script',
-    description: 'Under 1KB tracking snippet. Zero impact on page load speed. Works everywhere.',
+    icon: Ticket,
+    title: 'Ticket System',
+    description: 'Full-featured ticketing with SLA tracking, priorities, assignments, and status workflows.',
   },
   {
-    icon: Eye,
-    title: 'Session Replay',
-    description: 'Watch how users interact with your product. Identify friction points and drop-offs.',
+    icon: BookOpen,
+    title: 'Knowledge Base',
+    description: 'Self-serve help center with articles, categories, and full-text search. Reduce ticket volume.',
   },
   {
-    icon: Database,
-    title: 'Own Your Data',
-    description: 'Self-hostable. Export anytime. No vendor lock-in. Your analytics data belongs to you.',
+    icon: Users,
+    title: 'Human Escalation',
+    description: 'Smart routing rules transfer conversations to the right agent based on topic or priority.',
   },
   {
-    icon: LineChart,
-    title: 'Error Tracking',
-    description: 'Sentry-like error monitoring built in. Catch bugs before your users report them.',
+    icon: Inbox,
+    title: 'Unified Inbox',
+    description: 'All chat, email, and social messages in one place. Never miss a customer message again.',
   },
 ]
