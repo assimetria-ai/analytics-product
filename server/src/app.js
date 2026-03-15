@@ -60,6 +60,12 @@ app.use(linkRedirect)
 // Serve React SPA in production
 const publicDir = path.join(__dirname, '..', 'public')
 if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {
+  const landingFile = path.join(publicDir, 'landing.html')
+  if (fs.existsSync(landingFile)) {
+    app.get('/', (_req, res) => {
+      res.sendFile(landingFile)
+    })
+  }
   app.use(express.static(publicDir))
   app.get('*', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'))

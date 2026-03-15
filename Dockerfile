@@ -61,7 +61,7 @@ COPY server/package*.json ./server/
 # Built frontend assets (served by Express as static files or a CDN)
 # Server looks for static files at server/src/../public = server/public
 COPY --from=client-build /app/client/dist ./server/public
-
+COPY landing.html ./server/public/landing.html
 RUN chown -R appuser:appgroup /app
 USER appuser
 
