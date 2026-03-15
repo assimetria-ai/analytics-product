@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /app/
+
+Sitemap: https://analytics-product-production.up.railway.app/sitemap.xml

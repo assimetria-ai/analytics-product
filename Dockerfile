@@ -68,6 +68,8 @@ COPY client/public/favicon* ./server/public/
 COPY landing.html ./server/public/landing.html
 # Logo files for landing page
 COPY client/public/logo*.png ./server/public/
+# SEO files: sitemap.xml and robots.txt
+COPY client/public/sitemap.xml client/public/robots.txt ./server/public/
 RUN chown -R appuser:appgroup /app
 USER appuser
 
