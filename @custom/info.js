@@ -58,7 +58,6 @@ const GENERAL_INFO = {
       noAllowedRoutes: [],
     },
   ],
-  authMode: 'web2',
   emailProvider: 'resend',
 }
 
