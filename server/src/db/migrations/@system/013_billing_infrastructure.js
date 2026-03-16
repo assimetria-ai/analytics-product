@@ -11,7 +11,7 @@ module.exports = {
 
   async up(db) {
     // Run schema SQL files in order (tables must exist before ALTER)
-    const schemasDir = path.join(__dirname, '..', 'schemas', '@system')
+    const schemasDir = path.join(__dirname, '..', '..', 'schemas', '@system')
 
     // 1. credits table
     const creditsSql = fs.readFileSync(path.join(schemasDir, 'credits.sql'), 'utf8')
