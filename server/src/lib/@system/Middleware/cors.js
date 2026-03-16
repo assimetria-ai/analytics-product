@@ -1,6 +1,6 @@
-// @system CORS middleware — fixed 2026-03-16 (task #13210)
-// Uses cors package callback pattern with explicit err.status = 403 on rejection.
-// Matches blogkit/letterflow pattern which returns proper status codes in production.
+// @system CORS middleware — fixed 2026-03-16 (task #13337)
+// Uses inline rejection pattern (res.status(403)) to prevent Express error handler
+// from converting CORS rejections into 500s.
 const cors = require('cors')
 
 const ALLOWED_ORIGINS = [
@@ -27,21 +27,32 @@ function isOriginAllowed(origin) {
   return false
 }
 
-const corsOptions = {
-  origin(origin, callback) {
-    if (isOriginAllowed(origin)) {
-      callback(null, true)
-    } else {
-      const err = new Error(`CORS: origin '${origin}' not allowed`)
-      err.status = 403
-      callback(err)
-    }
-  },
+/**
+ * CORS middleware with inline rejection handling.
+ * Rejections return 403 directly without going through Express error handler.
+ * This avoids the 500 status code that callback(err) can produce when the error
+ * flows through middleware chains that strip/ignore err.status.
+ */
+const corsHandler = cors({
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token'],
   exposedHeaders: ['X-Total-Count', 'X-Request-Id'],
   maxAge: 600, // preflight cache 10 min
+})
+
+function corsMiddleware(req, res, next) {
+  const origin = req.headers.origin
+
+  if (isOriginAllowed(origin)) {
+    // Allowed — delegate to cors package for proper header setting
+    return corsHandler(req, res, next)
+  }
+
+  // Rejection: respond directly with 403 — never pass to next(err)
+  // This prevents Express error handler from converting it to 500
+  res.status(403).json({ message: `CORS: origin '${origin}' not allowed` })
 }
 
-module.exports = cors(corsOptions)
+module.exports = corsMiddleware
