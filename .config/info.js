@@ -13,7 +13,7 @@ let GENERAL_INFO = {
   email: 'support@assimetria.com',
   supportEmail: 'support@assimetria.com',
   socials: [],
-  theme_color: '#6b7280',
+  theme_color: '#1E3A5F',
   background_color: '#f7f6fe',
   links: {
     faq: 'https://analytics-product-production.up.railway.app/docs',
