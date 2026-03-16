@@ -59,6 +59,40 @@ function _reset(key) {
   failStore.delete(key)
 }
 
+// ── Token extraction helper ───────────────────────────────────────────────────
+
+/**
+ * Reads the access token from:
+ *   1. `access_token` cookie (new name)
+ *   2. `token` cookie (legacy name, backward-compatible)
+ *   3. Authorization: Bearer <token> header
+ *
+ * Used by sessions/index.js for blacklist checks and logout.
+ */
+function extractAccessToken(req) {
+  return (
+    req.cookies?.access_token ??
+    req.cookies?.token ??
+    req.headers.authorization?.replace('Bearer ', '') ??
+    null
+  )
+}
+
+/**
+ * Returns a sanitized public-facing user object (strips password_hash, internal fields).
+ */
+function toPublicUser(user) {
+  return {
+    id:                   user.id,
+    email:                user.email,
+    name:                 user.name,
+    role:                 user.role,
+    emailVerified:        !!(user.email_verified_at ?? user.email_verified),
+    onboardingCompleted:  !!user.onboarding_completed,
+    activeBrandId:        user.active_brand_id ?? null,
+  }
+}
+
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 /** Maximum age of a session family, matching the value in sessions/index.js. */
@@ -313,6 +347,8 @@ function requireOwnerOrAdmin(getOwnerId) {
 
 module.exports = {
   authenticate,
+  extractAccessToken,
+  toPublicUser,
   requireAdmin,
   requireOwnerOrAdmin,
   recordPasswordFailure,
