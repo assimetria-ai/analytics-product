@@ -33,7 +33,7 @@ WORKDIR /app/client
 
 # Manifests first → better layer caching
 COPY client/package*.json ./
-RUN npm ci --ignore-scripts
+RUN npm ci --legacy-peer-deps --ignore-scripts
 
 COPY client/ ./
 
