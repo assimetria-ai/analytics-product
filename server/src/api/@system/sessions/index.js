@@ -165,6 +165,13 @@ router.post('/sessions', loginLimiter, validate({ body: LoginBody }), async (req
       return res.status(401).json({ message: 'Invalid credentials' })
     }
 
+    // OAuth-only users have no password_hash — reject gracefully instead of
+    // letting bcrypt.compare throw on null (which causes a 500).
+    if (!user.password_hash) {
+      await incrementFailedAttempts(normalizedEmail)
+      return res.status(401).json({ message: 'This account uses social login. Please sign in with Google or GitHub.' })
+    }
+
     const valid = await bcrypt.compare(password, user.password_hash)
     if (!valid) {
       await incrementFailedAttempts(normalizedEmail)
