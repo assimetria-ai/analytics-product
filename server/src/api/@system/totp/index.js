@@ -17,7 +17,7 @@ const { validate } = require('../../../lib/@system/Validation')
 const { EnableTotpBody, DisableTotpBody } = require('../../../lib/@system/Validation/schemas/@system/totp')
 const { totpSetupLimiter, totpEnableLimiter } = require('../../../lib/@system/RateLimit')
 
-const APP_NAME = process.env.APP_NAME ?? 'ProductTemplate'
+const APP_NAME = process.env.APP_NAME ?? 'Analytics Product'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
