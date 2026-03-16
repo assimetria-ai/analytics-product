@@ -256,10 +256,17 @@ async function up() {
 
     CREATE INDEX IF NOT EXISTS idx_ab_test_variants_test ON ab_test_variants(ab_test_id);
 
-    -- Add self-referential FK now that the variants table exists
-    ALTER TABLE ab_tests
-      ADD CONSTRAINT fk_ab_tests_winner
-      FOREIGN KEY (winner_variant_id) REFERENCES ab_test_variants(id) ON DELETE SET NULL;
+    -- Add self-referential FK now that the variants table exists (idempotent)
+    DO $$ BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints
+        WHERE constraint_name = 'fk_ab_tests_winner' AND table_name = 'ab_tests'
+      ) THEN
+        ALTER TABLE ab_tests
+          ADD CONSTRAINT fk_ab_tests_winner
+          FOREIGN KEY (winner_variant_id) REFERENCES ab_test_variants(id) ON DELETE SET NULL;
+      END IF;
+    END $$;
 
     COMMENT ON TABLE ab_test_variants IS 'Individual variants in an A/B test with per-variant metrics';
 
