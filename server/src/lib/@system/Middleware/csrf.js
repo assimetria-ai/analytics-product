@@ -45,6 +45,9 @@ const {
  * has a session, so CSRF protection doesn't apply — there's no cookie to steal.
  * Webhook routes receive server-to-server calls that can't carry CSRF tokens.
  */
+/**
+ * Paths exempt from CSRF validation (prefix match via startsWith).
+ */
 const CSRF_EXEMPT_PATHS = [
   '/api/auth/register',
   '/api/auth/login',
@@ -54,9 +57,21 @@ const CSRF_EXEMPT_PATHS = [
   '/api/sessions',
   '/api/sessions/refresh',
   '/api/sessions/register',
+  '/api/users/password/request',
+  '/api/users/password/reset',
+  '/api/users/email/verify',
   '/api/webhook',
   '/api/stripe/webhook',
   '/api/payments/webhook',
+]
+
+/**
+ * Paths exempt only when matched exactly (not as prefix).
+ * Used for endpoints like POST /api/users (registration) where /api/users/me
+ * and other sub-paths still require CSRF protection.
+ */
+const CSRF_EXEMPT_EXACT = [
+  '/api/users',
 ]
 
 /**
@@ -70,8 +85,13 @@ const csrfProtection = (req, res, next) => {
 
   // Skip CSRF for auth and webhook routes (no session to protect)
   // Check both full path (app-level mount) and stripped path (router-level mount)
-  const fullPath = req.originalUrl || req.path
-  if (CSRF_EXEMPT_PATHS.some(p => fullPath.startsWith(p) || req.path.startsWith(p) || req.path.startsWith(p.replace('/api', '')))) {
+  const fullPath = (req.originalUrl || req.path).split('?')[0]
+  const routerPath = req.path.split('?')[0]
+  if (CSRF_EXEMPT_PATHS.some(p => fullPath.startsWith(p) || routerPath.startsWith(p) || routerPath.startsWith(p.replace('/api', '')))) {
+    return next()
+  }
+  // Exact-match exemptions (e.g. POST /api/users but NOT /api/users/me)
+  if (CSRF_EXEMPT_EXACT.some(p => fullPath === p || routerPath === p || routerPath === p.replace('/api', ''))) {
     return next()
   }
 
