@@ -23,7 +23,12 @@ export function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting } } = useForm({
-    resolver: zodResolver(loginSchema) })
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: ''
+    }
+  })
 
   async function onSubmit(values) {
     setServerError(null)
