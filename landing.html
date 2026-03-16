@@ -3,22 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Letterflow — Write. Land. Earn.</title>
-  <meta name="description" content="Newsletter platform for creators. Rich editor, subscriber management, automation sequences, analytics, and monetization tools. Start free.">
-  <meta property="og:title" content="Letterflow — Write. Land. Earn.">
-  <meta property="og:description" content="Newsletter platform for creators. Rich editor, subscriber management, automation sequences, analytics, and monetization tools.">
+  <title>Analytics Product — See everything. Miss nothing.</title>
+  <meta name="description" content="Privacy-first product analytics for SaaS founders. Event tracking, funnels, error monitoring, session replay — all in one platform. No cookies by default.">
+  <meta property="og:title" content="Analytics Product — See everything. Miss nothing.">
+  <meta property="og:description" content="Privacy-first product analytics for SaaS founders. Event tracking, funnels, error monitoring, session replay.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://letterflow-production.up.railway.app">
+  <meta property="og:url" content="https://analytics-product-production.up.railway.app">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --brand: #0EA5E9;
-      --brand-dark: #0284C7;
-      --brand-light: #38BDF8;
+      --brand: #1E3A5F;
+      --brand-dark: #152C4A;
+      --brand-light: #2A5080;
+      --accent: #3B82F6;
+      --accent-light: #60A5FA;
       --bg: #ffffff;
-      --bg-alt: #f8fafc;
+      --bg-alt: #F0F4F8;
+      --bg-dark: #0F1C2E;
       --text: #0f172a;
       --text-secondary: #64748b;
       --border: #e2e8f0;
@@ -45,16 +48,15 @@
     .logo {
       font-size: 20px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--brand);
       text-decoration: none;
       letter-spacing: -0.5px;
     }
-    .logo span { color: var(--brand); }
-    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links { display: flex; align-items: center; gap: 24px; }
     .nav-links a {
-      font-size: 14px;
       color: var(--text-secondary);
       text-decoration: none;
+      font-size: 14px;
       font-weight: 500;
       transition: color 0.2s;
     }
@@ -62,10 +64,12 @@
 
     /* BUTTONS */
     .btn {
-      display: inline-block;
-      padding: 12px 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
       border-radius: var(--radius);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s;
@@ -79,11 +83,11 @@
     .btn-primary:hover { background: var(--brand-dark); }
     .btn-secondary {
       background: transparent;
-      color: var(--text);
-      border: 1.5px solid var(--border);
+      color: var(--brand);
+      border: 1.5px solid var(--brand);
     }
-    .btn-secondary:hover { border-color: var(--brand); color: var(--brand); }
-    .btn-small { padding: 8px 20px; font-size: 13px; }
+    .btn-secondary:hover { background: var(--bg-alt); }
+    .btn-large { padding: 14px 32px; font-size: 16px; }
 
     /* HERO */
     .hero {
@@ -94,20 +98,21 @@
     }
     .hero-badge {
       display: inline-block;
-      padding: 6px 16px;
       background: var(--bg-alt);
-      border: 1px solid var(--border);
-      border-radius: 100px;
+      color: var(--brand);
+      padding: 6px 16px;
+      border-radius: 20px;
       font-size: 13px;
-      color: var(--text-secondary);
-      font-weight: 500;
+      font-weight: 600;
       margin-bottom: 24px;
+      border: 1px solid var(--border);
     }
     .hero h1 {
       font-size: clamp(36px, 5vw, 56px);
       font-weight: 800;
       line-height: 1.1;
       letter-spacing: -1.5px;
+      color: var(--text);
       margin-bottom: 20px;
     }
     .hero h1 span { color: var(--brand); }
@@ -116,87 +121,219 @@
       color: var(--text-secondary);
       max-width: 600px;
       margin: 0 auto 32px;
+      line-height: 1.7;
     }
     .hero-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* DASHBOARD PREVIEW */
+    .preview {
+      max-width: 960px;
+      margin: 48px auto 0;
+      padding: 0 24px;
+    }
+    .preview-window {
+      background: var(--bg-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(15, 28, 46, 0.2);
+    }
+    .preview-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.05);
+    }
+    .preview-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+    }
+    .preview-content {
+      padding: 32px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .metric-card {
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .metric-label {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .metric-change {
+      font-size: 12px;
+      color: #34D399;
+      margin-top: 4px;
+    }
+    .chart-area {
+      grid-column: 1 / -1;
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 24px;
+      height: 180px;
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .chart-bar {
+      flex: 1;
+      background: linear-gradient(to top, var(--accent), var(--accent-light));
+      border-radius: 4px 4px 0 0;
+      min-height: 8px;
+      opacity: 0.8;
+    }
 
     /* FEATURES */
     .features {
       max-width: 1120px;
       margin: 0 auto;
-      padding: 80px 24px;
+      padding: 100px 24px;
     }
-    .features h2 {
+    .features-header {
       text-align: center;
-      font-size: 32px;
-      font-weight: 700;
+      margin-bottom: 60px;
+    }
+    .features-header h2 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
       margin-bottom: 12px;
-      letter-spacing: -0.5px;
     }
-    .features .subtitle {
-      text-align: center;
-      color: var(--text-secondary);
+    .features-header p {
       font-size: 16px;
-      margin-bottom: 48px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
     }
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
     }
     .feature-card {
-      padding: 28px;
+      padding: 32px;
       border: 1px solid var(--border);
       border-radius: 12px;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      transition: box-shadow 0.2s, border-color 0.2s;
     }
     .feature-card:hover {
       border-color: var(--brand);
-      box-shadow: 0 4px 12px rgba(14, 165, 233, 0.08);
+      box-shadow: 0 4px 20px rgba(30, 58, 95, 0.08);
     }
     .feature-icon {
-      width: 40px;
-      height: 40px;
+      width: 48px;
+      height: 48px;
       background: var(--bg-alt);
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 16px;
-      color: var(--brand);
-      font-size: 20px;
+      margin-bottom: 20px;
+      font-size: 22px;
     }
     .feature-card h3 {
-      font-size: 16px;
-      font-weight: 600;
+      font-size: 18px;
+      font-weight: 700;
       margin-bottom: 8px;
     }
     .feature-card p {
       font-size: 14px;
       color: var(--text-secondary);
-      line-height: 1.5;
+      line-height: 1.7;
     }
 
-    /* PRICING */
-    .pricing {
+    /* PRIVACY SECTION */
+    .privacy-section {
       background: var(--bg-alt);
       padding: 80px 24px;
     }
-    .pricing-inner {
+    .privacy-inner {
       max-width: 1120px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
     }
-    .pricing h2 {
-      text-align: center;
+    .privacy-inner h2 {
       font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-weight: 800;
       letter-spacing: -0.5px;
+      margin-bottom: 16px;
     }
-    .pricing .subtitle {
-      text-align: center;
-      color: var(--text-secondary);
+    .privacy-inner p {
       font-size: 16px;
-      margin-bottom: 48px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .privacy-list { list-style: none; }
+    .privacy-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .privacy-list li::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--brand);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-size: 12px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    .privacy-code {
+      background: var(--bg-dark);
+      border-radius: 12px;
+      padding: 32px;
+      color: rgba(255,255,255,0.85);
+      font-family: 'SF Mono', Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .privacy-code .comment { color: rgba(255,255,255,0.35); }
+    .privacy-code .tag { color: #60A5FA; }
+    .privacy-code .attr { color: #34D399; }
+    .privacy-code .str { color: #FBBF24; }
+
+    /* PRICING */
+    .pricing {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    .pricing-header h2 {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .pricing-header p {
+      font-size: 16px;
+      color: var(--text-secondary);
     }
     .pricing-grid {
       display: grid;
@@ -205,95 +342,95 @@
       max-width: 960px;
       margin: 0 auto;
     }
-    .plan-card {
-      background: var(--bg);
+    .pricing-card {
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 32px;
+      padding: 36px;
       position: relative;
     }
-    .plan-card.featured {
+    .pricing-card.featured {
       border-color: var(--brand);
-      box-shadow: 0 8px 24px rgba(14, 165, 233, 0.12);
+      box-shadow: 0 8px 30px rgba(30, 58, 95, 0.12);
     }
-    .plan-badge {
+    .pricing-badge {
       position: absolute;
       top: -12px;
       left: 50%;
       transform: translateX(-50%);
       background: var(--brand);
       color: #fff;
+      padding: 4px 16px;
+      border-radius: 12px;
       font-size: 12px;
       font-weight: 600;
-      padding: 4px 14px;
-      border-radius: 100px;
     }
-    .plan-card h3 {
-      font-size: 18px;
-      font-weight: 600;
+    .pricing-card h3 {
+      font-size: 20px;
+      font-weight: 700;
       margin-bottom: 8px;
     }
-    .plan-price {
+    .pricing-card .price {
       font-size: 40px;
       font-weight: 800;
-      letter-spacing: -1px;
       margin-bottom: 4px;
     }
-    .plan-period {
-      font-size: 14px;
+    .pricing-card .price span { font-size: 16px; font-weight: 400; color: var(--text-secondary); }
+    .pricing-card .price-sub {
+      font-size: 13px;
       color: var(--text-secondary);
       margin-bottom: 24px;
     }
-    .plan-features {
+    .pricing-features {
       list-style: none;
       margin-bottom: 28px;
     }
-    .plan-features li {
+    .pricing-features li {
+      padding: 6px 0;
       font-size: 14px;
       color: var(--text-secondary);
-      padding: 6px 0;
-      padding-left: 24px;
-      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .plan-features li::before {
+    .pricing-features li::before {
       content: '\2713';
-      position: absolute;
-      left: 0;
       color: var(--brand);
       font-weight: 700;
     }
 
     /* CTA */
     .cta {
-      max-width: 1120px;
-      margin: 0 auto;
+      background: var(--brand);
       padding: 80px 24px;
       text-align: center;
     }
     .cta h2 {
-      font-size: 32px;
-      font-weight: 700;
+      font-size: 36px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -1px;
       margin-bottom: 16px;
-      letter-spacing: -0.5px;
     }
     .cta p {
       font-size: 16px;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
+      color: rgba(255,255,255,0.7);
       max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto 32px;
     }
+    .cta .btn-primary {
+      background: #fff;
+      color: var(--brand);
+    }
+    .cta .btn-primary:hover { background: #f1f5f9; }
 
     /* FOOTER */
     footer {
-      border-top: 1px solid var(--border);
       max-width: 1120px;
       margin: 0 auto;
-      padding: 32px 24px;
+      padding: 40px 24px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       font-size: 13px;
       color: var(--text-secondary);
     }
@@ -302,172 +439,238 @@
       text-decoration: none;
     }
     footer a:hover { color: var(--text); }
-    .footer-links { display: flex; gap: 24px; }
 
-    @media (max-width: 640px) {
-      .nav-links { gap: 16px; }
-      .hero { padding: 48px 16px 40px; }
-      .features, .cta { padding: 48px 16px; }
-      .pricing { padding: 48px 16px; }
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .hero { padding: 48px 20px 40px; }
+      .hero h1 { font-size: 32px; }
+      .preview-content { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: 1fr; }
+      .privacy-inner { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .nav-links { display: none; }
       footer { flex-direction: column; gap: 12px; text-align: center; }
     }
   </style>
 </head>
 <body>
-
   <!-- NAV -->
   <nav>
-    <a href="/" class="logo">Letter<span>flow</span></a>
+    <a href="/" class="logo">Analytics Product</a>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
-      <a href="/app/login" class="btn btn-primary btn-small">Log in</a>
+      <a href="/app" class="btn btn-primary">Sign In</a>
     </div>
   </nav>
 
   <!-- HERO -->
   <section class="hero">
-    <div class="hero-badge">Newsletter platform for creators</div>
-    <h1>Write. <span>Land.</span> Earn.</h1>
-    <p>The newsletter platform that helps creators grow their audience, land in inboxes, and earn from their writing. Powerful editor, smart automations, real analytics.</p>
+    <div class="hero-badge">Privacy-first analytics</div>
+    <h1>See everything.<br><span>Miss nothing.</span></h1>
+    <p>Product analytics built for SaaS founders who care about data ownership. Track events, build funnels, catch errors, replay sessions — all without cookies.</p>
     <div class="hero-buttons">
-      <a href="/app/register" class="btn btn-primary">Start free</a>
-      <a href="#features" class="btn btn-secondary">See features</a>
+      <a href="/app/register" class="btn btn-primary btn-large">Get Started Free</a>
+      <a href="#features" class="btn btn-secondary btn-large">See Features</a>
     </div>
   </section>
 
+  <!-- DASHBOARD PREVIEW -->
+  <div class="preview">
+    <div class="preview-window">
+      <div class="preview-bar">
+        <div class="preview-dot"></div>
+        <div class="preview-dot"></div>
+        <div class="preview-dot"></div>
+      </div>
+      <div class="preview-content">
+        <div class="metric-card">
+          <div class="metric-label">Visitors</div>
+          <div class="metric-value">12,847</div>
+          <div class="metric-change">+14.2% vs last week</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Events</div>
+          <div class="metric-value">284K</div>
+          <div class="metric-change">+8.7% vs last week</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Conversions</div>
+          <div class="metric-value">3.2%</div>
+          <div class="metric-change">+0.4% vs last week</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Errors</div>
+          <div class="metric-value">23</div>
+          <div class="metric-change" style="color:#F87171;">+3 new today</div>
+        </div>
+        <div class="chart-area">
+          <div class="chart-bar" style="height:35%"></div>
+          <div class="chart-bar" style="height:42%"></div>
+          <div class="chart-bar" style="height:38%"></div>
+          <div class="chart-bar" style="height:55%"></div>
+          <div class="chart-bar" style="height:48%"></div>
+          <div class="chart-bar" style="height:62%"></div>
+          <div class="chart-bar" style="height:58%"></div>
+          <div class="chart-bar" style="height:72%"></div>
+          <div class="chart-bar" style="height:65%"></div>
+          <div class="chart-bar" style="height:80%"></div>
+          <div class="chart-bar" style="height:75%"></div>
+          <div class="chart-bar" style="height:90%"></div>
+          <div class="chart-bar" style="height:85%"></div>
+          <div class="chart-bar" style="height:95%"></div>
+          <div class="chart-bar" style="height:88%"></div>
+          <div class="chart-bar" style="height:78%"></div>
+          <div class="chart-bar" style="height:82%"></div>
+          <div class="chart-bar" style="height:70%"></div>
+          <div class="chart-bar" style="height:76%"></div>
+          <div class="chart-bar" style="height:92%"></div>
+          <div class="chart-bar" style="height:85%"></div>
+          <div class="chart-bar" style="height:100%"></div>
+          <div class="chart-bar" style="height:93%"></div>
+          <div class="chart-bar" style="height:88%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- FEATURES -->
   <section class="features" id="features">
-    <h2>Everything you need to grow</h2>
-    <p class="subtitle">Eight core tools designed for newsletter creators who mean business.</p>
+    <div class="features-header">
+      <h2>Everything you need to understand your users</h2>
+      <p>Seven powerful features that replace your entire analytics stack.</p>
+    </div>
     <div class="features-grid">
-
       <div class="feature-card">
-        <div class="feature-icon">&#9993;</div>
-        <h3>Newsletter Editor</h3>
-        <p>Rich text block editor with drag-and-drop sections, inline image uploads, reusable templates, and mobile preview. HTML export and scheduled publishing.</p>
+        <div class="feature-icon">&#60;/&#62;</div>
+        <h3>Embed Script</h3>
+        <p>Lightweight JS snippet under 1KB gzipped. One-line install, no cookies by default, GDPR-compliant out of the box. Auto-captures page views and clicks.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#9782;</div>
-        <h3>Subscriber Management</h3>
-        <p>Import via CSV or API. Segment by tags, signup source, engagement level, or custom fields. Automatic bounce and unsubscribe handling.</p>
+        <div class="feature-icon">&#9679;</div>
+        <h3>Event Tracking</h3>
+        <p>Auto-capture page views, clicks, and form submissions. Custom event API for business-specific actions. Retroactive event definition so you never miss a thing.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#10148;</div>
-        <h3>Email Sending</h3>
-        <p>Send campaigns via Resend or AWS SES. SPF/DKIM setup wizard, deliverability scoring, send-time optimization, and automatic list hygiene.</p>
+        <div class="feature-icon">&#9632;</div>
+        <h3>Real-time Dashboard</h3>
+        <p>Visitors, sessions, bounce rate, top pages, referrers, UTM breakdown, and geography. Customizable date ranges, filters, and comparison periods.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#9636;</div>
-        <h3>Analytics Dashboard</h3>
-        <p>Per-campaign open rate, click rate, unsubscribes, and growth trends. Subscriber growth chart, geo distribution, and top content ranking.</p>
+        <div class="feature-icon">&#8615;</div>
+        <h3>Funnels</h3>
+        <p>Define multi-step conversion funnels. Visualize drop-off with percentages. Filter by user properties, time range, or cohort. Compare segments side-by-side.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#9881;</div>
-        <h3>Automation Sequences</h3>
-        <p>Multi-step drip campaigns triggered by signup, tag, or date. Visual sequence builder with delay nodes, conditional branches, and per-step metrics.</p>
+        <div class="feature-icon">&#9888;</div>
+        <h3>Error Tracking</h3>
+        <p>Sentry-like error capture. Automatic JS error collection, stack traces with source maps, grouping and deduplication, severity levels, webhook and email alerts.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#9783;</div>
-        <h3>Landing Pages</h3>
-        <p>Drag-and-drop landing page builder for newsletter signups. Custom domains, embedded forms, social proof widgets, and conversion tracking.</p>
+        <div class="feature-icon">&#9654;</div>
+        <h3>User Sessions</h3>
+        <p>Session replay with lightweight DOM snapshots. User journey visualization, page flow analysis, and click heatmaps on any page — no heavy video recording.</p>
       </div>
-
       <div class="feature-card">
-        <div class="feature-icon">&#9878;</div>
-        <h3>A/B Testing</h3>
-        <p>Split-test subject lines, sender names, content blocks, and send times. Automatic winner selection based on open rate or click rate.</p>
+        <div class="feature-icon">{&nbsp;}</div>
+        <h3>API Access</h3>
+        <p>REST API for querying all analytics data programmatically. Webhook support for real-time event forwarding. API key authentication with rate limiting.</p>
       </div>
+    </div>
+  </section>
 
-      <div class="feature-card">
-        <div class="feature-icon">&#8693;</div>
-        <h3>Import / Export</h3>
-        <p>One-click import from Mailchimp, Substack, ConvertKit, or CSV. Export subscriber lists and campaign history. GDPR-compliant data portability.</p>
+  <!-- PRIVACY / EMBED -->
+  <section class="privacy-section">
+    <div class="privacy-inner">
+      <div>
+        <h2>One line of code. Zero cookies.</h2>
+        <p>Add our embed script to your site in seconds. We collect the data you need without invading your users' privacy. No cookie banners required.</p>
+        <ul class="privacy-list">
+          <li>No cookies by default</li>
+          <li>GDPR and CCPA compliant</li>
+          <li>Under 1KB gzipped</li>
+          <li>Self-hostable</li>
+          <li>Open data export</li>
+        </ul>
       </div>
-
+      <div class="privacy-code">
+        <span class="comment">&lt;!-- Add before &lt;/head&gt; --&gt;</span><br>
+        <span class="tag">&lt;script</span><br>
+        &nbsp;&nbsp;<span class="attr">src</span>=<span class="str">"https://analytics-product-production.up.railway.app/embed.js"</span><br>
+        &nbsp;&nbsp;<span class="attr">data-site</span>=<span class="str">"YOUR_SITE_ID"</span><br>
+        &nbsp;&nbsp;<span class="attr">defer</span><br>
+        <span class="tag">&gt;&lt;/script&gt;</span>
+      </div>
     </div>
   </section>
 
   <!-- PRICING -->
   <section class="pricing" id="pricing">
-    <div class="pricing-inner">
+    <div class="pricing-header">
       <h2>Simple, transparent pricing</h2>
-      <p class="subtitle">Start free. Upgrade when you grow. No surprise fees.</p>
-      <div class="pricing-grid">
-
-        <div class="plan-card">
-          <h3>Starter</h3>
-          <div class="plan-price">$0</div>
-          <div class="plan-period">forever</div>
-          <ul class="plan-features">
-            <li>Up to 2,500 subscribers</li>
-            <li>Newsletter editor</li>
-            <li>Basic analytics</li>
-            <li>1 automation sequence</li>
-            <li>Landing page builder</li>
-            <li>CSV import/export</li>
-          </ul>
-          <a href="/app/register" class="btn btn-secondary" style="width:100%;text-align:center;">Get started</a>
-        </div>
-
-        <div class="plan-card featured">
-          <div class="plan-badge">Most popular</div>
-          <h3>Growth</h3>
-          <div class="plan-price">$29</div>
-          <div class="plan-period">per month</div>
-          <ul class="plan-features">
-            <li>Up to 25,000 subscribers</li>
-            <li>Everything in Starter</li>
-            <li>Unlimited automations</li>
-            <li>A/B testing</li>
-            <li>Custom domains</li>
-            <li>Priority sending</li>
-            <li>Advanced analytics</li>
-          </ul>
-          <a href="/app/register" class="btn btn-primary" style="width:100%;text-align:center;">Start free trial</a>
-        </div>
-
-        <div class="plan-card">
-          <h3>Scale</h3>
-          <div class="plan-price">$79</div>
-          <div class="plan-period">per month</div>
-          <ul class="plan-features">
-            <li>Up to 100,000 subscribers</li>
-            <li>Everything in Growth</li>
-            <li>Dedicated IP</li>
-            <li>Remove branding</li>
-            <li>API access</li>
-            <li>Priority support</li>
-            <li>Team collaboration</li>
-          </ul>
-          <a href="/app/register" class="btn btn-secondary" style="width:100%;text-align:center;">Contact us</a>
-        </div>
-
+      <p>Start free. Scale when you're ready.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Free</h3>
+        <div class="price">$0<span>/mo</span></div>
+        <div class="price-sub">Up to 10K events/month</div>
+        <ul class="pricing-features">
+          <li>Core analytics dashboard</li>
+          <li>Event auto-capture</li>
+          <li>1 funnel</li>
+          <li>7-day data retention</li>
+          <li>Embed script</li>
+        </ul>
+        <a href="/app/register" class="btn btn-secondary" style="width:100%">Get Started</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <h3>Pro</h3>
+        <div class="price">$49<span>/mo</span></div>
+        <div class="price-sub">Unlimited events</div>
+        <ul class="pricing-features">
+          <li>Everything in Free</li>
+          <li>Unlimited funnels</li>
+          <li>Error tracking</li>
+          <li>Session replay</li>
+          <li>API access</li>
+          <li>12-month retention</li>
+        </ul>
+        <a href="/app/register" class="btn btn-primary" style="width:100%">Start Free Trial</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="price">$199<span>/mo</span></div>
+        <div class="price-sub">Custom volume</div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>SSO / SAML</li>
+          <li>Dedicated support</li>
+          <li>Custom integrations</li>
+          <li>Unlimited retention</li>
+          <li>SLA guarantee</li>
+        </ul>
+        <a href="/app/register" class="btn btn-secondary" style="width:100%">Contact Sales</a>
       </div>
     </div>
   </section>
 
   <!-- CTA -->
   <section class="cta">
-    <h2>Ready to grow your newsletter?</h2>
-    <p>Join creators who write, land in inboxes, and earn from their audience. Start free today.</p>
-    <a href="/app/register" class="btn btn-primary">Start free</a>
+    <h2>Start tracking today</h2>
+    <p>Join SaaS founders who own their analytics data. Free forever for small projects.</p>
+    <a href="/app/register" class="btn btn-primary btn-large">Get Started for Free</a>
   </section>
 
   <!-- FOOTER -->
   <footer>
-    <span>Letterflow 2026</span>
-    <div class="footer-links">
+    <span>Analytics Product &copy; 2026</span>
+    <div style="display:flex;gap:20px;">
+      <a href="/app">Dashboard</a>
       <a href="#features">Features</a>
       <a href="#pricing">Pricing</a>
-      <a href="/app/login">Log in</a>
     </div>
   </footer>
-
 </body>
 </html>
