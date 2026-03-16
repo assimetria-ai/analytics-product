@@ -1,20 +1,20 @@
 /**
- * @custom/info.js — Analytics Product Configuration
+ * @custom/info.js — Letterflow Configuration
  */
 
 const info = {
-  name: 'Analytics Product',
-  tagline: 'See everything. Miss nothing.',
-  slug: 'analytics-product',
+  name: 'Letterflow',
+  tagline: 'Write. Land. Earn.',
+  slug: 'letterflow',
   navItems: [
-    { to: '/dashboard',      label: 'Dashboard',      icon: 'LayoutDashboard' },
-    { to: '/embed-script',   label: 'Embed Script',   icon: 'Code' },
-    { to: '/events',         label: 'Event Tracking',  icon: 'Activity' },
-    { to: '/funnels',        label: 'Funnels',         icon: 'Filter' },
-    { to: '/errors',         label: 'Error Tracking',  icon: 'AlertTriangle' },
-    { to: '/sessions',       label: 'User Sessions',   icon: 'Users' },
-    { to: '/api',            label: 'API Access',      icon: 'Key' },
-    { to: '/settings',       label: 'Settings',        icon: 'Settings' },
+    { to: '/app',             label: 'Dashboard',       icon: 'LayoutDashboard' },
+    { to: '/app/posts',       label: 'Newsletters',     icon: 'Mail' },
+    { to: '/app/posts/new',   label: 'Compose',         icon: 'PenSquare' },
+    { to: '/app/calendar',    label: 'Schedule',        icon: 'Calendar' },
+    { to: '/app/analytics',   label: 'Analytics',       icon: 'BarChart3' },
+    { to: '/app/templates',   label: 'Templates',       icon: 'FileText' },
+    { to: '/app/hashtags',    label: 'Growth',          icon: 'TrendingUp' },
+    { to: '/app/settings',    label: 'Settings',        icon: 'Settings' },
   ],
 }
 
