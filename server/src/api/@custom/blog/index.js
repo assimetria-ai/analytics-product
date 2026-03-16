@@ -68,19 +68,6 @@ router.get('/blog/admin', authenticate, requireAdmin, validate({ query: ListBlog
   }
 })
 
-// ── GET /api/blog/:slug — single published post (public) ─────────────────────
-router.get('/blog/:slug', validate({ params: BlogPostSlugParams }), async (req, res, next) => {
-  try {
-    const post = await BlogPostRepo.findBySlug(req.params.slug)
-    if (!post || post.status !== 'published') {
-      return res.status(404).json({ message: 'Post not found' })
-    }
-    res.json({ post })
-  } catch (err) {
-    next(err)
-  }
-})
-
 // ── POST /api/blog — create post (admin) ─────────────────────────────────────
 router.post('/blog', authenticate, requireAdmin, validate({ body: CreateBlogPostBody }), async (req, res, next) => {
   try {
@@ -448,6 +435,22 @@ router.get('/blog/admin/search', authenticate, requireAdmin, async (req, res, ne
     )
 
     res.json({ posts, total: parseInt(countRow.count, 10) })
+  } catch (err) {
+    next(err)
+  }
+})
+
+// ── GET /api/blog/:slug — single published post (public) ─────────────────────
+// IMPORTANT: This catch-all param route MUST be defined AFTER all specific
+// /blog/* routes (categories, tags, settings, admin/search) to avoid Express
+// matching e.g. /blog/categories as :slug="categories".
+router.get('/blog/:slug', validate({ params: BlogPostSlugParams }), async (req, res, next) => {
+  try {
+    const post = await BlogPostRepo.findBySlug(req.params.slug)
+    if (!post || post.status !== 'published') {
+      return res.status(404).json({ message: 'Post not found' })
+    }
+    res.json({ post })
   } catch (err) {
     next(err)
   }
