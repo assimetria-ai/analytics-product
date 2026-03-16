@@ -54,7 +54,7 @@ export function Alert({ className, variant = 'default', title, dismissible, onCl
           onClick={handleDismiss}
           className={cn(
             'flex-shrink-0 opacity-70 hover:opacity-100 active:opacity-100 transition-opacity',
-            'min-h-[44px] min-w-[44px] flex items-center justify-center',
+            'touch-target min-h-touch min-w-touch flex items-center justify-center',
             '-mr-2 sm:-mr-1',
           )}
           aria-label="Dismiss alert"
