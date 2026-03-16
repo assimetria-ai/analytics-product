@@ -26,6 +26,14 @@ const {
   clearFailedAttempts,
 } = require('../../../lib/@system/AccountLockout')
 
+/**
+ * Returns true if the error is due to JWT keys not being configured.
+ * Used by catch blocks to return 503 instead of 500.
+ */
+function isJwtConfigError(err) {
+  return err && (err.code === 'JWT_NOT_CONFIGURED' || (err.message && err.message.includes('JWT') && err.message.includes('not configured')))
+}
+
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000           // 15 minutes
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
 const BLACKLIST_PREFIX = 'session:blacklist:'
@@ -126,6 +134,9 @@ router.post('/sessions/register', async (req, res, next) => {
 
     res.status(201).json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
+    if (isJwtConfigError(err)) {
+      return res.status(503).json({ message: 'Authentication service is temporarily unavailable. Please try again later.' })
+    }
     next(err)
   }
 })
@@ -211,6 +222,9 @@ router.post('/sessions', loginLimiter, validate({ body: LoginBody }), async (req
 
     res.json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
+    if (isJwtConfigError(err)) {
+      return res.status(503).json({ message: 'Authentication service is temporarily unavailable. Please try again later.' })
+    }
     next(err)
   }
 })
@@ -263,6 +277,9 @@ router.post('/sessions/refresh', refreshLimiter, async (req, res, next) => {
 
     res.json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
+    if (isJwtConfigError(err)) {
+      return res.status(503).json({ message: 'Authentication service is temporarily unavailable. Please try again later.' })
+    }
     next(err)
   }
 })

@@ -161,6 +161,11 @@ app.use((err, req, res, _next) => {
     })
   }
 
+  // JWT configuration errors should return 503, not 500
+  if (err.code === 'JWT_NOT_CONFIGURED') {
+    return res.status(503).json({ message: 'Authentication service is temporarily unavailable. Please try again later.' })
+  }
+
   const status = err.status ?? err.statusCode ?? 500
   res.status(status).json({ message: err.message ?? 'Internal server error' })
 })

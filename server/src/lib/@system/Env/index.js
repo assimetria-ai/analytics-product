@@ -299,18 +299,20 @@ function validate() {
   }
 
   // Ensure at least one source is configured for each JWT key
+  // Missing JWT keys are a warning, not a fatal error — the server should still boot
+  // for health checks and non-auth endpoints. Auth endpoints will return 401/503 gracefully.
   const hasPrivateKey = !!(process.env.JWT_PRIVATE_KEY_FILE || process.env.JWT_PRIVATE_KEY)
   const hasPublicKey = !!(process.env.JWT_PUBLIC_KEY_FILE || process.env.JWT_PUBLIC_KEY)
 
   if (!hasPrivateKey) {
-    errors.push(
-      '  ✗  JWT_PRIVATE_KEY_FILE (or JWT_PRIVATE_KEY) — required but not set. ' +
+    warnings.push(
+      '  ⚠  JWT_PRIVATE_KEY_FILE (or JWT_PRIVATE_KEY) — not set. Auth endpoints will not work. ' +
       'Run: npm run generate-keys'
     )
   }
   if (!hasPublicKey) {
-    errors.push(
-      '  ✗  JWT_PUBLIC_KEY_FILE (or JWT_PUBLIC_KEY) — required but not set. ' +
+    warnings.push(
+      '  ⚠  JWT_PUBLIC_KEY_FILE (or JWT_PUBLIC_KEY) — not set. Auth endpoints will not work. ' +
       'Run: npm run generate-keys'
     )
   }
@@ -336,10 +338,10 @@ function validate() {
     const publicKeyPem = readOrInline('JWT_PUBLIC_KEY_FILE', 'JWT_PUBLIC_KEY')
 
     if (hasPrivateKey && (!privateKeyPem.includes('BEGIN') || !privateKeyPem.includes('PRIVATE KEY'))) {
-      errors.push('  ✗  JWT_PRIVATE_KEY — must be a real PEM key in production, not a placeholder')
+      warnings.push('  ⚠  JWT_PRIVATE_KEY — does not look like a real PEM key. Auth will not work.')
     }
     if (hasPublicKey && (!publicKeyPem.includes('BEGIN') || !publicKeyPem.includes('PUBLIC KEY'))) {
-      errors.push('  ✗  JWT_PUBLIC_KEY — must be a real PEM key in production, not a placeholder')
+      warnings.push('  ⚠  JWT_PUBLIC_KEY — does not look like a real PEM key. Auth will not work.')
     }
   }
 
