@@ -119,7 +119,9 @@ if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {
       res.sendFile(landingFile)
     })
   }
-  app.use(express.static(publicDir))
+  // index: false prevents express.static from auto-serving index.html for '/'
+  // so the explicit landing page route above always takes priority
+  app.use(express.static(publicDir, { index: false }))
   app.get('*', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'))
   })
