@@ -13,6 +13,9 @@ const customRoutes = require('./routes/@custom')
 
 const app = express()
 
+// Trust the first proxy (Railway) so express-rate-limit works correctly
+app.set('trust proxy', 1)
+
 // Health check endpoints registered before all middleware (including CORS) so that
 // infrastructure health probes with no Origin header reach them without triggering
 // CORS rejection. These are the only paths permitted to bypass CORS in production.
