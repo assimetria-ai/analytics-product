@@ -21,7 +21,9 @@ module.exports = {
     const txSql = fs.readFileSync(path.join(schemasDir, 'transactions.sql'), 'utf8')
     await db.none(txSql)
 
-    // 3. collaborators table
+    // 3. collaborators table — drop stale version first (old migration used wrong
+    //    schema path creating the table without invite_email/status/metadata columns)
+    await db.none('DROP TABLE IF EXISTS collaborators CASCADE')
     const collabSql = fs.readFileSync(path.join(schemasDir, 'collaborators.sql'), 'utf8')
     await db.none(collabSql)
 
