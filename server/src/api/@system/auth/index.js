@@ -22,6 +22,22 @@ const {
   getFailedAttemptCount,
   clearFailedAttempts,
 } = require('../../../lib/@system/AccountLockout')
+const logger = require('../../../lib/@system/Logger')
+
+/**
+ * Detect JWT configuration errors so auth endpoints return 503 (service unavailable)
+ * instead of a generic 500 when JWT keys are not set up.
+ */
+function isJwtConfigError(err) {
+  return err && (err.code === 'JWT_NOT_CONFIGURED' || (err.message && err.message.includes('JWT') && err.message.includes('not configured')))
+}
+
+function handleJwtConfigError(res) {
+  return res.status(503).json({
+    message: 'Authentication service is temporarily unavailable. Please try again later.',
+    error: 'AUTH_SERVICE_UNAVAILABLE',
+  })
+}
 
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000
@@ -73,6 +89,10 @@ router.post('/auth/register', async (req, res, next) => {
 
     res.status(201).json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
+    if (isJwtConfigError(err)) {
+      logger.error({ err }, '[auth/register] JWT keys not configured — returning 503')
+      return handleJwtConfigError(res)
+    }
     next(err)
   }
 })
@@ -120,6 +140,10 @@ router.post('/auth/login', loginLimiter, validate({ body: LoginBody }), async (r
 
     res.json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
+    if (isJwtConfigError(err)) {
+      logger.error({ err }, '[auth/login] JWT keys not configured — returning 503')
+      return handleJwtConfigError(res)
+    }
     next(err)
   }
 })
