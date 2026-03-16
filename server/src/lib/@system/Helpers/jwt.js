@@ -51,9 +51,10 @@ if (!PRIVATE_KEY || !PUBLIC_KEY) {
     '  Option A (file-based, recommended): set JWT_PRIVATE_KEY_FILE and JWT_PUBLIC_KEY_FILE to PEM file paths.\n' +
     '  Option B (inline, for Railway/Doppler): set JWT_PRIVATE_KEY and JWT_PUBLIC_KEY as PEM strings.\n' +
     '  Run: npm run generate-keys  to generate and configure keys automatically.'
-  // Log a loud warning but do NOT crash the server — let it boot for health checks
-  // and non-auth endpoints. Auth endpoints will return 401/503 gracefully.
-  console.error(msg)
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('[jwt] FATAL: JWT keys must be configured in production. ' + msg)
+  }
+  console.warn(msg)
 }
 
 // Promisified versions of the jsonwebtoken callback API
@@ -64,38 +65,18 @@ const _verifyAsync = promisify(jwt.verify)
 const ACCESS_TOKEN_TTL = process.env.ACCESS_TOKEN_TTL ?? '15m'
 
 function signToken(payload, options = {}) {
-  if (!PRIVATE_KEY) {
-    const err = new Error('JWT private key not configured. Set JWT_PRIVATE_KEY or JWT_PRIVATE_KEY_FILE.')
-    err.code = 'JWT_NOT_CONFIGURED'
-    throw err
-  }
   return jwt.sign(payload, PRIVATE_KEY, { algorithm: ALGORITHM, expiresIn: ACCESS_TOKEN_TTL, ...options })
 }
 
 function verifyToken(token) {
-  if (!PUBLIC_KEY) {
-    const err = new Error('JWT public key not configured. Set JWT_PUBLIC_KEY or JWT_PUBLIC_KEY_FILE.')
-    err.code = 'JWT_NOT_CONFIGURED'
-    throw err
-  }
   return jwt.verify(token, PUBLIC_KEY, { algorithms: [ALGORITHM] })
 }
 
 async function signTokenAsync(payload, options = {}) {
-  if (!PRIVATE_KEY) {
-    const err = new Error('JWT private key not configured. Set JWT_PRIVATE_KEY or JWT_PRIVATE_KEY_FILE.')
-    err.code = 'JWT_NOT_CONFIGURED'
-    throw err
-  }
   return _signAsync(payload, PRIVATE_KEY, { algorithm: ALGORITHM, expiresIn: ACCESS_TOKEN_TTL, ...options })
 }
 
 async function verifyTokenAsync(token) {
-  if (!PUBLIC_KEY) {
-    const err = new Error('JWT public key not configured. Set JWT_PUBLIC_KEY or JWT_PUBLIC_KEY_FILE.')
-    err.code = 'JWT_NOT_CONFIGURED'
-    throw err
-  }
   return _verifyAsync(token, PUBLIC_KEY, { algorithms: [ALGORITHM] })
 }
 
