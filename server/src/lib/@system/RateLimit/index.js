@@ -151,6 +151,7 @@ const integrationTestLimiter = createLimiter({
 })
 
 module.exports = {
+  createLimiter,
   loginLimiter,
   registerLimiter,
   passwordResetLimiter,
