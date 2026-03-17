@@ -8,6 +8,7 @@ const express = require('express')
 const router = express.Router()
 const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
+const sanitizeHtml = require('sanitize-html')
 const { authenticate, extractAccessToken } = require('../../../lib/@system/Helpers/auth')
 const UserRepo = require('../../../db/repos/@system/UserRepo')
 const RefreshTokenRepo = require('../../../db/repos/@system/RefreshTokenRepo')
@@ -24,22 +25,6 @@ const {
   getFailedAttemptCount,
   clearFailedAttempts,
 } = require('../../../lib/@system/AccountLockout')
-const logger = require('../../../lib/@system/Logger')
-
-/**
- * Detect JWT configuration errors so auth endpoints return 503 (service unavailable)
- * instead of a generic 500 when JWT keys are not set up.
- */
-function isJwtConfigError(err) {
-  return err && (err.code === 'JWT_NOT_CONFIGURED' || (err.message && err.message.includes('JWT') && err.message.includes('not configured')))
-}
-
-function handleJwtConfigError(res) {
-  return res.status(503).json({
-    message: 'Authentication service is temporarily unavailable. Please try again later.',
-    error: 'AUTH_SERVICE_UNAVAILABLE',
-  })
-}
 
 const ACCESS_TOKEN_TTL_MS = 15 * 60 * 1000
 const REFRESH_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000
@@ -73,9 +58,8 @@ router.post('/auth/register', validate({ body: RegisterBody }), async (req, res,
     if (!pwCheck.valid) return res.status(400).json({ message: pwCheck.message })
 
     const normalizedEmail = email.toLowerCase()
-    // Sanitize name: strip HTML tags (lightweight, no sanitize-html dep needed)
     const sanitizedName = typeof name === 'string'
-      ? name.replace(/<[^>]*>/g, '').trim() || null
+      ? sanitizeHtml(name, { allowedTags: [], allowedAttributes: {} }).trim() || null
       : null
 
     const existing = await UserRepo.findByEmail(normalizedEmail)
@@ -94,10 +78,6 @@ router.post('/auth/register', validate({ body: RegisterBody }), async (req, res,
 
     res.status(201).json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
-    if (isJwtConfigError(err)) {
-      logger.error({ err }, '[auth/register] JWT keys not configured — returning 503')
-      return handleJwtConfigError(res)
-    }
     next(err)
   }
 })
@@ -123,6 +103,13 @@ router.post('/auth/login', loginLimiter, validate({ body: LoginBody }), async (r
       return res.status(401).json({ message: 'Invalid credentials' })
     }
 
+    // OAuth-only users have no password_hash — reject gracefully instead of
+    // letting bcrypt.compare throw on null (which causes a 500).
+    if (!user.password_hash) {
+      await incrementFailedAttempts(normalizedEmail)
+      return res.status(401).json({ message: 'This account uses social login. Please sign in with Google or GitHub.' })
+    }
+
     const valid = await bcrypt.compare(password, user.password_hash)
     if (!valid) {
       await incrementFailedAttempts(normalizedEmail)
@@ -145,10 +132,6 @@ router.post('/auth/login', loginLimiter, validate({ body: LoginBody }), async (r
 
     res.json({ user: { id: user.id, email: user.email, name: user.name } })
   } catch (err) {
-    if (isJwtConfigError(err)) {
-      logger.error({ err }, '[auth/login] JWT keys not configured — returning 503')
-      return handleJwtConfigError(res)
-    }
     next(err)
   }
 })

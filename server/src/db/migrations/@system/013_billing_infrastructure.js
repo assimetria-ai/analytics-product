@@ -11,7 +11,7 @@ module.exports = {
 
   async up(db) {
     // Run schema SQL files in order (tables must exist before ALTER)
-    const schemasDir = path.join(__dirname, '..', '..', 'schemas', '@system')
+    const schemasDir = path.join(__dirname, '..', 'schemas', '@system')
 
     // 1. credits table
     const creditsSql = fs.readFileSync(path.join(schemasDir, 'credits.sql'), 'utf8')
@@ -21,9 +21,7 @@ module.exports = {
     const txSql = fs.readFileSync(path.join(schemasDir, 'transactions.sql'), 'utf8')
     await db.none(txSql)
 
-    // 3. collaborators table — drop stale version first (old migration used wrong
-    //    schema path creating the table without invite_email/status/metadata columns)
-    await db.none('DROP TABLE IF EXISTS collaborators CASCADE')
+    // 3. collaborators table
     const collabSql = fs.readFileSync(path.join(schemasDir, 'collaborators.sql'), 'utf8')
     await db.none(collabSql)
 
