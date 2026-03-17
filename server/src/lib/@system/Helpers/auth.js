@@ -3,6 +3,9 @@ const { verifyTokenAsync } = require('./jwt')
 const UserRepo = require('../../../db/repos/@system/UserRepo')
 const ApiKeyRepo = require('../../../db/repos/@system/ApiKeyRepo')
 
+// Use @custom toPublicUser for product-specific fields (e.g. activeBrandId)
+const { toPublicUser } = require('../../@custom/Helpers/toPublicUser')
+
 /**
  * Reads the access token from:
  *   1. `access_token` cookie (new name)
@@ -19,18 +22,6 @@ function extractAccessToken(req) {
 
 function hashKey(raw) {
   return crypto.createHash('sha256').update(raw).digest('hex')
-}
-
-function toPublicUser(user) {
-  return {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-    role: user.role,
-    emailVerified: !!user.email_verified_at,
-    onboardingCompleted: !!user.onboarding_completed,
-    activeBrandId: user.active_brand_id ?? null,
-  }
 }
 
 async function authenticate(req, res, next) {
