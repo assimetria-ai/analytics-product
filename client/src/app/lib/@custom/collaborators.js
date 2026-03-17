@@ -1,5 +1,5 @@
 // @custom — collaborators management client
-import { api } from '../@system/api.js'
+import { api } from '../@system/api'
 
 
 

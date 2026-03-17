@@ -6,15 +6,12 @@ const cookieParser = require('cookie-parser')
 const pinoHttp = require('pino-http')
 
 const logger = require('./lib/@system/Logger')
-const { cors, securityHeaders, csrfProtection, attachDatabase } = require('./lib/@system/Middleware')
+const { cors, securityHeaders, csrfProtection, generateCsrfToken } = require('./lib/@system/Middleware')
 const { apiLimiter } = require('./lib/@system/RateLimit')
 const systemRoutes = require('./routes/@system')
-const customRoutes = require('./routes/@custom')
+let customRoutes; try { customRoutes = require('./routes/@custom') } catch(e) { console.warn('[app] @custom routes failed:', e.message); const express = require('express'); customRoutes = express.Router() }
 
 const app = express()
-
-// Trust the first proxy (Railway) so express-rate-limit works correctly
-app.set('trust proxy', 1)
 
 // Health check endpoints registered before all middleware (including CORS) so that
 // infrastructure health probes with no Origin header reach them without triggering
@@ -28,34 +25,8 @@ app.get('/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/api/health', (_req, res) => res.status(200).json({ status: 'ok' }))
 app.get('/healthz', (_req, res) => res.status(200).json({ status: 'ok' }))
 
-// Admin health endpoint — returns 200 with DB connection status.
-// Registered before CORS so infrastructure probes can reach it without Origin headers.
-const db = require('./lib/@system/PostgreSQL')
-app.get('/api/admin/health', async (_req, res) => {
-  const result = { status: 'ok', timestamp: new Date().toISOString(), db: 'connected' }
-  try {
-    await db.one('SELECT 1')
-  } catch (_err) {
-    result.status = 'degraded'
-    result.db = 'disconnected'
-    return res.status(503).json(result)
-  }
-  res.status(200).json(result)
-})
-
-// Serve the embed tracking script publicly at /embed.js (no auth, cache 1h)
-const TRACKER_PATH = path.join(__dirname, '..', '..', '@custom', 'embed', 'tracker.js')
-app.get('/embed.js', (_req, res) => {
-  res.set('Content-Type', 'application/javascript')
-  res.set('Cache-Control', 'public, max-age=3600')
-  res.sendFile(TRACKER_PATH)
-})
-
 app.use(securityHeaders)
-// CORS only for API routes — static files and SPA catch-all must be accessible
-// via direct browser navigation (no Origin header). Previously applied globally,
-// which caused HTTP 500 on direct navigation and broke frontend health checks.
-app.use('/api', cors)
+app.use(cors)
 app.use(compression())
 app.use(express.json({ limit: '10mb' }))
 app.use(cookieParser())
@@ -64,67 +35,26 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(pinoHttp({ logger }))
 }
 
+// CSRF token endpoint — clients must call this before making state-changing requests
+app.get('/api/csrf-token', (req, res) => {
+  const csrfToken = generateCsrfToken(req, res)
+  res.json({ csrfToken })
+})
+
+// CSRF protection for all state-changing requests (POST, PUT, PATCH, DELETE)
+app.use(csrfProtection)
+
 // General rate limiting for all API routes (baseline DoS protection)
 app.use('/api', apiLimiter)
-
-// CSRF protection for state-changing requests
-// Automatically validates CSRF tokens on POST/PUT/PATCH/DELETE requests
-// Clients must first GET /api/csrf-token and include the token in X-CSRF-Token header
-app.use('/api', csrfProtection)
-
-// Attach database repositories to req.db
-app.use('/api', attachDatabase)
 
 // Routes
 app.use('/api', systemRoutes)
 app.use('/api', customRoutes)
 
-// Link shortening redirects (must be before SPA fallback)
-const { linkRedirect } = require('./lib/@custom/redirects')
-app.use(linkRedirect)
-
-// API 404 — must be before SPA fallback so unmatched /api/* routes return JSON
-app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }))
-
-// ─── SEO: robots.txt ──────────────────────────────────────────────────────────
-// Provides a robots.txt that points crawlers to the sitemap.
-app.get('/robots.txt', (req, res) => {
-  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-  res.type('text/plain').send(
-    `User-agent: *\nAllow: /\n\nSitemap: ${baseUrl}/sitemap.xml\n`
-  );
-});
-
-// ─── SEO: sitemap index ───────────────────────────────────────────────────────
-app.get('/sitemap.xml', (req, res) => {
-  const baseUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
-  const now = new Date().toISOString().split('T')[0];
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <sitemap>
-    <loc>${baseUrl}/api/blog/sitemap.xml</loc>
-    <lastmod>${now}</lastmod>
-  </sitemap>
-</sitemapindex>`;
-  res.set('Content-Type', 'application/xml; charset=utf-8');
-  res.set('Cache-Control', 'public, max-age=3600');
-  res.send(xml);
-});
-
-// Landing page support: if server/public/landing.html exists, serve it at root (/)
-// so Railway deploys show the marketing landing page instead of the SPA shell.
-// The SPA (dashboard) is still available at /app and all other routes.
+// Serve React SPA in production
 const publicDir = path.join(__dirname, '..', 'public')
 if (process.env.NODE_ENV === 'production' && fs.existsSync(publicDir)) {
-  const landingFile = path.join(publicDir, 'landing.html')
-  if (fs.existsSync(landingFile)) {
-    app.get('/', (_req, res) => {
-      res.sendFile(landingFile)
-    })
-  }
-  // index: false prevents express.static from auto-serving index.html for '/'
-  // so the explicit landing page route above always takes priority
-  app.use(express.static(publicDir, { index: false }))
+  app.use(express.static(publicDir))
   app.get('*', (req, res) => {
     res.sendFile(path.join(publicDir, 'index.html'))
   })
@@ -164,11 +94,6 @@ app.use((err, req, res, _next) => {
     return res.status(status >= 400 && status < 600 ? status : 400).json({
       message: 'Something went wrong with the payment service. Please try again or contact support.',
     })
-  }
-
-  // JWT configuration errors should return 503, not 500
-  if (err.code === 'JWT_NOT_CONFIGURED') {
-    return res.status(503).json({ message: 'Authentication service is temporarily unavailable. Please try again later.' })
   }
 
   const status = err.status ?? err.statusCode ?? 500

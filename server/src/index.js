@@ -5,7 +5,7 @@ require('dotenv').config()
   const { execFileSync, spawnSync } = require('child_process')
   const path = require('path')
   const node = process.execPath
-  const runJs = path.join(__dirname, 'db/migrations/run.js')
+  const runJs = path.join(__dirname, 'db/migrations/@system/run.js')
   const dropScript = path.join(__dirname, '..', 'scripts', 'drop-schema-migrations.js')
   const log = (msg) => console.log(`[startup][${new Date().toISOString()}] ${msg}`)
   try {
@@ -26,7 +26,7 @@ require('dotenv').config()
 require('./lib/@system/Env') // validate env vars — exits with a clear error if required vars are missing
 const app = require('./app')
 const logger = require('./lib/@system/Logger')
-const { isReady: isRedisReady } = require('./lib/@system/Redis')
+const { connect: connectRedis } = require('./lib/@system/Redis')
 const { connectPool: connectPostgres, disconnectPool: disconnectPostgres } = require('./lib/@system/PostgreSQL')
 const { scheduler } = require('./scheduler/tasks/@system')
 
@@ -38,8 +38,7 @@ const BIND_HOST = process.env.BIND_HOST ||
 
 async function start() {
   await connectPostgres()
-  // Redis connects eagerly via lazyConnect in its module init — just log status
-  logger.info({ redisReady: isRedisReady() }, 'Redis status (graceful degradation if unavailable)')
+  await connectRedis()
 
   // ── Email logging ──────────────────────────────────────────────────────
   // Register email tracking callback if EmailLogRepo exists
@@ -53,13 +52,12 @@ async function start() {
   }
 
   // ── Scheduler ──────────────────────────────────────────────────────────
-  // Initialize custom tasks (application layer imports @custom, not @system)
   try {
     const initCustomTasks = require('./scheduler/tasks/@custom/init')
     initCustomTasks(scheduler)
-    logger.info('custom tasks initialised')
+    logger.info('scheduler: custom tasks initialised')
   } catch (err) {
-    logger.warn({ err }, 'no custom task init found or init failed — skipping')
+    logger.warn({ err }, 'scheduler: no custom init found or init failed — skipping')
   }
 
   const server = app.listen(PORT, BIND_HOST, () => {

@@ -2,22 +2,22 @@
 // @system — do not modify this file directly; override values in config/@custom/
 
 let GENERAL_INFO = {
-  name: 'Analytics Product',
-  description: 'See everything. Miss nothing. Privacy-first product analytics for SaaS founders.',
+  name: 'ProductTemplate',
+  description: 'New SaaS Product built on the Assimetria template',
   cta: {
-    title: 'Start Tracking Today',
-    description: 'Join SaaS founders who own their analytics data.',
+    title: 'Start Today',
+    description: 'Join thousands of users transforming their workflow.',
     buttonText: 'Get Started for Free',
   },
-  url: 'https://analytics-product-production.up.railway.app',
-  email: 'support@assimetria.com',
-  supportEmail: 'support@assimetria.com',
+  url: 'https://yourproduct.com',
+  email: 'general@yourproduct.com',
+  supportEmail: 'support@yourproduct.com',
   socials: [],
-  theme_color: '#1E3A5F',
+  theme_color: '#6940f8',
   background_color: '#f7f6fe',
   links: {
-    faq: 'https://analytics-product-production.up.railway.app/docs',
-    refer_and_earn: 'https://analytics-product-production.up.railway.app/refer-and-earn',
+    faq: 'https://support.yourproduct.com',
+    refer_and_earn: 'https://yourproduct.com/refer-and-earn',
   },
   products: {
     monthly: {

@@ -2,7 +2,7 @@
 
 // @custom — init
 // Register your custom tasks with the scheduler here.
-// Called automatically from src/index.js during server startup.
+// Called from server/src/index.js on server start.
 //
 // Usage:
 //   const { MyTask } = require('.')

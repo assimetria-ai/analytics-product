@@ -1,7 +1,11 @@
-// @custom components — Support Product
-export { SupportLayout } from './SupportLayout.jsx'
-export { ConversationList } from './ConversationList.jsx'
-export { MessageThread } from './MessageThread.jsx'
-export { TicketRow } from './TicketRow.jsx'
-export { KBArticleCard } from './KBArticleCard.jsx'
-export { ChatWidgetPreview } from './ChatWidgetPreview.jsx'
+// @custom components — product-specific components
+// Add your custom components here and export them.
+// These will be available alongside @system components.
+// This file is NEVER overwritten during template sync.
+//
+// Example:
+// import MyCustomComponent from './MyCustomComponent'
+// export { MyCustomComponent }
+
+export { PasswordStrengthIndicator } from './PasswordStrengthIndicator'
+export { HeroSection } from './HeroSection/HeroSection'

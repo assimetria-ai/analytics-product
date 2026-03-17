@@ -11,7 +11,7 @@ import {
   RefreshCw,
   X } from 'lucide-react'
 import { Header } from '../../../components/@system/Header/Header'
-import { AnalyticsLayout } from '../../../components/@custom/AnalyticsLayout'
+import { PageLayout } from '../../../components/@system/layout/PageLayout'
 import { cn } from '../../../lib/@system/utils'
 import { api } from '../../../lib/@system/api'
 import { ErrorTrackingPageSkeleton } from '../../../components/@system/Skeleton/Skeleton'
@@ -102,7 +102,7 @@ function ErrorDetailModal({ event, onClose, onStatusChange }) {
         {/* Body */}
         <div className="p-5 space-y-4">
           {/* Meta */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <p className="text-xs text-muted-foreground mb-0.5">First seen</p>
               <p className="font-medium">{timeAgo(event.first_seen)}</p>
@@ -257,7 +257,7 @@ export function ErrorTrackingPage() {
   }
 
   return (
-    <AnalyticsLayout>
+    <PageLayout>
       <Header />
       <main className="container py-8">
         {/* Page header */}
@@ -318,7 +318,7 @@ export function ErrorTrackingPage() {
           <div className="relative">
             <select
               value={levelFilter}
-              onChange={(e) => { setLevelFilter(e.target.value || ''); setPage(0) }}
+              onChange={(e) => { setLevelFilter(e.target.value | ''); setPage(0) }}
               className="appearance-none pl-8 pr-8 py-1.5 text-sm rounded-md border border-border bg-background text-foreground cursor-pointer hover:bg-muted focus:outline-none"
             >
               {LEVEL_OPTIONS.map((o) => (
@@ -423,6 +423,6 @@ export function ErrorTrackingPage() {
           onStatusChange={handleStatusChange}
         />
       )}
-    </AnalyticsLayout>
+    </PageLayout>
   )
 }

@@ -12,26 +12,5 @@ const BrandRepo = require('./BrandRepo')
 const CollaboratorRepo = require('./CollaboratorRepo')
 const BlogPostRepo = require('./BlogPostRepo')
 const UserRepo = require('./UserRepo')
-const TeamRepo = require('./TeamRepo')
-const PermissionRepo = require('./PermissionRepo')
-const EmailLogRepo = require('./EmailLogRepo')
-const FileUploadRepo = require('./FileUploadRepo')
-const EventRepo = require('./EventRepo')
-const AnalyticsSessionRepo = require('./AnalyticsSessionRepo')
-const FunnelRepo = require('./FunnelRepo')
 
-module.exports = {
-  ApiKeyRepo,
-  AuditLogRepo,
-  BlogPostRepo,
-  BrandRepo,
-  CollaboratorRepo,
-  UserRepo,
-  TeamRepo,
-  PermissionRepo,
-  EmailLogRepo,
-  FileUploadRepo,
-  EventRepo,
-  AnalyticsSessionRepo,
-  FunnelRepo,
-}
+module.exports = { ApiKeyRepo, AuditLogRepo, BlogPostRepo, BrandRepo, CollaboratorRepo, UserRepo }

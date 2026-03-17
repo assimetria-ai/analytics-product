@@ -1,6 +1,6 @@
 {
-  "version": "1.4.0",
-  "generatedAt": "2026-03-07",
+  "version": "1.0.0",
+  "generatedAt": "2026-02-26",
   "maintainer": "frederico",
   "description": "Assimetria Product Template — feature manifest. Updated as features are built. Powers the Template Compliance Dashboard in Assimetria OS.",
   "stack": {
@@ -11,7 +11,7 @@
     "database": "PostgreSQL",
     "logging": "Pino + pino-http"
   },
-  "categories": ["auth", "database", "dashboard", "landing", "legal", "referral", "payments", "support", "storage", "devops", "email", "notification", "testing", "analytics", "security", "misc"],
+  "categories": ["auth", "database", "dashboard", "landing", "legal", "referral", "payments", "support", "storage", "devops", "email", "testing", "analytics", "misc"],
   "features": [
     {
       "id": "auth-001",
@@ -52,21 +52,6 @@
         "GITHUB_CLIENT_ID",
         "GITHUB_CLIENT_SECRET",
         "SERVER_URL"
-      ]
-    },
-    {
-      "id": "security-001",
-      "name": "Rate Limiting",
-      "category": "security",
-      "status": "built",
-      "version": "1.0.0",
-      "description": "Express rate limiting middleware with Redis-backed store (fallback to in-memory). General API rate limiter (100 req/min baseline DoS protection) applied to all /api routes. Endpoint-specific limiters for auth (login: 10/15min, register: 5/hr, password-reset: 5/hr, refresh: 30/min, oauth: 20/min), TOTP (setup: 5/hr, enable/disable: 5/10min), API keys (10/hr), uploads (20/min), AI (chat: 20/min, image: 5/hr), admin (read: 60/min, write: 10/min), and integration tests (10/min). All limiters return standard RateLimit-* headers and log warnings on threshold breach. Automatically disabled in test and development environments.",
-      "files": [
-        "server/src/lib/@system/RateLimit/index.js",
-        "server/src/app.js"
-      ],
-      "envVars": [
-        "REDIS_URL"
       ]
     },
     {
@@ -232,25 +217,6 @@
       }
     },
     {
-      "id": "notification-001",
-      "name": "Notification Adapter (Slack + Discord + Console)",
-      "category": "notification",
-      "status": "built",
-      "version": "1.0.0",
-      "description": "Unified notification adapter with pluggable backends. Abstracts Slack, Discord, and console logging behind a single interface. Provider auto-detected from env vars (priority: Slack → Discord → console fallback). Supports title, body, severity levels (info/warning/error), and metadata fields. Health check endpoints for monitoring adapter status.",
-      "files": [
-        "server/src/lib/@system/NotificationAdapter/index.js",
-        "server/src/lib/@system/NotificationAdapter/SlackAdapter.js",
-        "server/src/lib/@system/NotificationAdapter/DiscordAdapter.js",
-        "server/src/lib/@system/NotificationAdapter/ConsoleAdapter.js"
-      ],
-      "envVars": [
-        "NOTIFICATION_PROVIDER",
-        "SLACK_WEBHOOK_URL",
-        "DISCORD_WEBHOOK_URL"
-      ]
-    },
-    {
       "id": "misc-003",
       "name": "Caching Layer",
       "category": "misc",
@@ -413,18 +379,6 @@
       "version": "1.2.0",
       "author": "frederico-junior",
       "changes": "email-001 upgraded to v2.0.0: built pluggable adapter architecture. Resend native REST API adapter (adapters/resend.js) — uses Node 18 fetch, no SDK dependency, supports cc/bcc/reply-to/attachments, verify() health check. SMTP adapter (adapters/smtp.js) — nodemailer wrapper with connection pooling, configurable TLS, works with Resend SMTP relay + SendGrid + Mailgun etc. Email index.js refactored to clean provider-selection logic (resend > smtp > ses > console). Admin API: GET /api/email/verify endpoint added. 29 unit tests — all passing."
-    },
-    {
-      "date": "2026-03-07",
-      "version": "1.3.0",
-      "author": "frederico-junior",
-      "changes": "Added notification-001: NotificationAdapter module documented in manifest. Unified notification system with Slack, Discord, and console adapters. Auto-detects provider from env vars. Supports severity levels (info/warning/error) and metadata fields. Added 'notification' category to manifest."
-    },
-    {
-      "date": "2026-03-07",
-      "version": "1.4.0",
-      "author": "frederico-junior",
-      "changes": "Added security-001: Rate Limiting feature to manifest. Comprehensive rate limiting implementation was already present in codebase but undocumented. Added 'security' category to manifest. Documented express-rate-limit middleware with Redis-backed store, general API limiter (100 req/min), and 15 endpoint-specific limiters for auth, TOTP, AI, admin, uploads, and integration tests. Auto-disabled in test/dev environments."
     }
   ]
 }

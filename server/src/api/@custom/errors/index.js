@@ -52,31 +52,6 @@ router.get('/errors/:id', authenticate, requireAdmin, async (req, res, next) => 
   }
 })
 
-// POST /api/errors/report — public browser-side error reporting endpoint
-// Used by the embed tracker script to report JS errors without auth or DSN
-router.post('/errors/report', async (req, res, next) => {
-  try {
-    const { fingerprint, title, message, level, platform, environment, release, stack_trace, extra } = req.body
-    if (!fingerprint || !title) {
-      return res.status(400).json({ message: 'fingerprint and title are required' })
-    }
-    const event = await ErrorEventRepo.upsertByFingerprint({
-      fingerprint,
-      title,
-      message,
-      level: level || 'error',
-      platform: platform || 'browser',
-      environment: environment || 'production',
-      release,
-      stack_trace,
-      extra,
-    })
-    res.status(201).json({ ok: true, id: event.id })
-  } catch (err) {
-    next(err)
-  }
-})
-
 // POST /api/errors  — ingest an error event (SDK/webhook endpoint)
 // Uses a shared DSN secret instead of user auth for flexibility
 router.post('/errors', async (req, res, next) => {

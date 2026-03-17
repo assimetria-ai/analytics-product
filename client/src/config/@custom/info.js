@@ -1,7 +1,10 @@
-// @custom — Analytics Product product-specific config
+// @custom — product-specific config override
+// Override any values from @system/info.ts here.
+// This file is NEVER overwritten during template sync.
+
 export const customInfo = {
-  name: 'Analytics Product',
-  tagline: 'See everything. Miss nothing.',
-  url: import.meta.env.VITE_APP_URL ?? 'https://analytics-product-production.up.railway.app',
-  supportEmail: 'support@analyticsproduct.com',
+  name: 'Splice',
+  tagline: 'Your product tagline here',
+  url: import.meta.env.VITE_APP_URL ?? 'http://localhost:5173',
+  supportEmail: 'support@splice.com',
 }
