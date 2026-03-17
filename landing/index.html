@@ -4,24 +4,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Analytics Product — See everything. Miss nothing.</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
   <meta name="description" content="Product analytics platform with event tracking, funnels, error capture, and session replay. Privacy-first. One-line install.">
+  <meta property="og:title" content="Analytics Product — See everything. Miss nothing.">
+  <meta property="og:description" content="Product analytics platform with event tracking, funnels, error capture, and session replay. Privacy-first. One-line install.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="../og-thumbnail.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Analytics Product — See everything. Miss nothing.">
+  <meta name="twitter:description" content="Product analytics platform with event tracking, funnels, error capture, and session replay. Privacy-first. One-line install.">
+  <meta name="twitter:image" content="../og-thumbnail.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     :root {
-      --brand: #6b7280;
-      --brand-dark: #374151;
-      --brand-light: #9ca3af;
+      --brand: #1E3A5F;
+      --brand-light: #2a5080;
+      --brand-dark: #152d4a;
       --bg: #ffffff;
-      --bg-alt: #f9fafb;
-      --text: #111827;
-      --text-secondary: #4b5563;
-      --border: #e5e7eb;
+      --bg-alt: #f8fafc;
+      --text: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --error: #ef4444;
       --radius: 8px;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: var(--text);
       background: var(--bg);
       line-height: 1.6;
@@ -37,12 +55,16 @@
       margin: 0 auto;
       padding: 20px 24px;
     }
-    .logo {
+    .logo-img { height: 32px; }
+    .logo-text {
       font-size: 20px;
       font-weight: 700;
-      color: var(--brand-dark);
+      color: var(--text);
       text-decoration: none;
       letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .nav-links { display: flex; gap: 32px; align-items: center; }
     .nav-links a {
@@ -52,32 +74,34 @@
       font-weight: 500;
       transition: color 0.2s;
     }
-    .nav-links a:hover { color: var(--text); }
+    .nav-links a:hover { color: var(--brand); }
 
     /* BUTTONS */
     .btn {
       display: inline-block;
       padding: 12px 28px;
-      border-radius: var(--radius);
+      border-radius: 6px;
       font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s;
       cursor: pointer;
       border: none;
+      font-family: inherit;
     }
     .btn-primary {
-      background: var(--brand-dark);
+      background: var(--brand);
       color: #fff;
     }
-    .btn-primary:hover { background: #1f2937; }
+    .btn-primary:hover { background: var(--brand-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(30,58,95,0.25); }
     .btn-secondary {
       background: transparent;
-      color: var(--brand-dark);
+      color: var(--brand);
       border: 1.5px solid var(--border);
     }
-    .btn-secondary:hover { border-color: var(--brand-dark); }
+    .btn-secondary:hover { border-color: var(--brand); }
     .btn-small { padding: 8px 20px; font-size: 13px; }
+    .btn-large { padding: 14px 36px; font-size: 16px; }
 
     /* HERO */
     .hero {
@@ -85,7 +109,21 @@
       margin: 0 auto;
       padding: 80px 24px 60px;
       text-align: center;
+      position: relative;
     }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(30,58,95,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero > * { position: relative; z-index: 1; }
     .hero-badge {
       display: inline-block;
       padding: 6px 16px;
@@ -97,6 +135,7 @@
       font-weight: 500;
       margin-bottom: 24px;
     }
+    .hero-badge strong { color: var(--brand); }
     .hero h1 {
       font-size: clamp(36px, 5vw, 56px);
       font-weight: 800;
@@ -105,6 +144,7 @@
       color: var(--text);
       margin-bottom: 20px;
     }
+    .hero h1 span { color: var(--brand); }
     .hero p {
       font-size: 18px;
       color: var(--text-secondary);
@@ -118,19 +158,20 @@
     .install-block {
       max-width: 520px;
       margin: 48px auto 0;
-      background: #1f2937;
+      background: #0f172a;
       border-radius: var(--radius);
       padding: 20px 24px;
       text-align: left;
       position: relative;
+      border: 1px solid #1e293b;
     }
     .install-block code {
-      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
       font-size: 13px;
-      color: #d1d5db;
+      color: #cbd5e1;
       line-height: 1.8;
     }
-    .install-block .comment { color: #6b7280; }
+    .install-block .comment { color: #64748b; }
     .install-block .tag { color: #93c5fd; }
     .install-block .attr { color: #fbbf24; }
     .install-block .str { color: #86efac; }
@@ -147,6 +188,7 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       margin-bottom: 12px;
+      color: var(--text);
     }
     .section-header p {
       font-size: 16px;
@@ -167,33 +209,34 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 32px;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     .alt-bg .feature-card { background: #fff; }
-    .feature-card:hover { border-color: var(--brand-light); }
+    .feature-card:hover { border-color: var(--brand); box-shadow: 0 4px 16px rgba(30,58,95,0.08); }
     .feature-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--bg-alt);
-      border-radius: var(--radius);
+      width: 44px;
+      height: 44px;
+      background: rgba(30,58,95,0.08);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 16px;
     }
     .feature-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--brand-dark);
+      width: 22px;
+      height: 22px;
+      stroke: var(--brand);
       fill: none;
-      stroke-width: 2;
+      stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
     .feature-card h3 {
-      font-size: 16px;
+      font-size: 17px;
       font-weight: 600;
       margin-bottom: 8px;
+      color: var(--text);
     }
     .feature-card p {
       font-size: 14px;
@@ -206,6 +249,10 @@
       width: 100%;
       border-collapse: collapse;
       font-size: 14px;
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
     .comparison-table th,
     .comparison-table td {
@@ -216,10 +263,10 @@
     .comparison-table th {
       font-weight: 600;
       background: var(--bg-alt);
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      color: var(--text-secondary);
+      color: var(--text-muted);
     }
     .comparison-table td:nth-child(2),
     .comparison-table td:nth-child(3),
@@ -227,8 +274,144 @@
     .comparison-table th:nth-child(3) {
       text-align: center;
     }
-    .check { color: var(--brand-dark); font-weight: 600; }
-    .cross { color: var(--brand-light); }
+    .check { color: var(--brand); font-weight: 600; }
+    .cross { color: var(--text-muted); }
+
+    /* PRICING */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 36px 32px;
+      text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: var(--brand);
+      box-shadow: 0 8px 32px rgba(30,58,95,0.12);
+    }
+    .pricing-card.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--brand);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 16px;
+      border-radius: 100px;
+    }
+    .pricing-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .pricing-card .price {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 16px 0 4px;
+      letter-spacing: -1px;
+    }
+    .pricing-card .price span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .pricing-card .price-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .pricing-card ul {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .pricing-card ul li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing-card ul li:last-child { border-bottom: none; }
+    .pricing-card ul li svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--brand);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+    .pricing-card .btn { width: 100%; text-align: center; }
+
+    /* TESTIMONIALS */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+    }
+    .testimonial-card .stars {
+      color: #f59e0b;
+      font-size: 16px;
+      margin-bottom: 16px;
+      letter-spacing: 2px;
+    }
+    .testimonial-card blockquote {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-style: normal;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .testimonial-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(30,58,95,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--brand);
+    }
+    .testimonial-author .name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .testimonial-author .role {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
 
     /* CTA */
     .cta {
@@ -240,11 +423,15 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       margin-bottom: 12px;
+      color: var(--text);
     }
     .cta p {
       font-size: 16px;
       color: var(--text-secondary);
       margin-bottom: 32px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     /* FOOTER */
@@ -255,36 +442,137 @@
     }
     footer p {
       font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* BENEFITS */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 32px;
+    }
+    .benefit-item {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .benefit-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(30,58,95,0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .benefit-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--brand);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .benefit-content h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .benefit-content p {
+      font-size: 14px;
       color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* FAQ */
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0;
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+    }
+    .faq-question svg {
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    .faq-item.open .faq-question svg {
+      transform: rotate(180deg);
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+    }
+    .faq-answer p {
+      padding: 0 0 20px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.7;
     }
 
     /* MOBILE */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .hero { padding: 48px 20px 40px; }
-      section { padding: 48px 20px; }
+      section { padding: 56px 20px; }
       .nav-links { gap: 16px; }
+      .nav-links a.hide-mobile { display: none; }
       .features-grid { grid-template-columns: 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 32px; }
+      .section-header h2 { font-size: 26px; }
     }
   </style>
 </head>
 <body>
 
-  <nav>
-    <a href="#" class="logo">Analytics Product</a>
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="#" class="logo-text">
+      <img src="../logo-dark-on-white.png" alt="Analytics Product" class="logo-img">
+      Analytics Product
+    </a>
     <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#compare">Compare</a>
+      <a href="#features" class="hide-mobile">Features</a>
+      <a href="#pricing" class="hide-mobile">Pricing</a>
+      <a href="#compare" class="hide-mobile">Compare</a>
       <a href="#" class="btn btn-primary btn-small">Get Started</a>
     </div>
   </nav>
 
-  <section class="hero">
-    <div class="hero-badge">Privacy-first analytics. No cookies required.</div>
-    <h1>See everything.<br>Miss nothing.</h1>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-badge"><strong>New:</strong> Error tracking with source maps is live</div>
+    <h1>See everything.<br><span>Miss nothing.</span></h1>
     <p>Product analytics with event tracking, conversion funnels, error capture, and session replay. One script tag. Full visibility. Your data stays yours.</p>
     <div class="hero-actions">
-      <a href="#" class="btn btn-primary">Start Free</a>
-      <a href="#features" class="btn btn-secondary">See Features</a>
+      <a href="#" class="btn btn-primary btn-large">Start Free</a>
+      <a href="#features" class="btn btn-secondary btn-large">See Features</a>
     </div>
     <div class="install-block">
       <code>
@@ -294,6 +582,88 @@
     </div>
   </section>
 
+  <!-- SOCIAL PROOF -->
+  <section class="alt-bg" id="social-proof">
+    <div class="section-inner">
+      <div class="section-header">
+        <p style="color:#a1a1aa;font-size:0.95rem;text-transform:uppercase;letter-spacing:2px;margin-bottom:1.5rem;">Trusted by data-driven teams worldwide</p>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:3rem;opacity:0.7;">
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Shopify</div>
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Stripe</div>
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Notion</div>
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Vercel</div>
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Linear</div>
+        <div style="font-size:1.4rem;font-weight:700;color:#fff;letter-spacing:1px;">Figma</div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:3rem;margin-top:2rem;flex-wrap:wrap;">
+        <div style="text-align:center;"><span style="font-size:2rem;font-weight:700;color:#fff;">12,000+</span><br><span style="color:#a1a1aa;font-size:0.85rem;">Active installations</span></div>
+        <div style="text-align:center;"><span style="font-size:2rem;font-weight:700;color:#fff;">3.2B</span><br><span style="color:#a1a1aa;font-size:0.85rem;">Events tracked monthly</span></div>
+        <div style="text-align:center;"><span style="font-size:2rem;font-weight:700;color:#fff;">99.9%</span><br><span style="color:#a1a1aa;font-size:0.85rem;">Uptime SLA</span></div>
+        <div style="text-align:center;"><span style="font-size:2rem;font-weight:700;color:#fff;">4.8/5</span><br><span style="color:#a1a1aa;font-size:0.85rem;">G2 rating</span></div>
+      </div>
+      <p style="text-align:center;margin-top:1.5rem;color:#a1a1aa;font-size:0.85rem;">As seen in TechCrunch, Product Hunt, and Hacker News</p>
+    </div>
+  </section>
+
+  <!-- BENEFITS -->
+  <section id="benefits">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Why teams switch to Analytics Product</h2>
+        <p>Stop juggling multiple tools. Get clarity, speed, and confidence in one platform.</p>
+      </div>
+      <div class="benefits-grid">
+
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <!-- lucide: zap -->
+            <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <div class="benefit-content">
+            <h3>Ship faster with real-time insights</h3>
+            <p>No more waiting for nightly reports. See how users interact with every release the moment it goes live. Make data-driven decisions in minutes, not days, and iterate at the speed your team actually ships.</p>
+          </div>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <!-- lucide: shield-check -->
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div class="benefit-content">
+            <h3>Privacy-first by default, not by add-on</h3>
+            <p>Cookie-free tracking and GDPR compliance built in from day one. No consent banners needed for basic analytics. Your legal team signs off in a single meeting instead of a quarter-long audit.</p>
+          </div>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <!-- lucide: layers -->
+            <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+          </div>
+          <div class="benefit-content">
+            <h3>One tool replaces three</h3>
+            <p>Analytics, error tracking, and session replay in a single lightweight script. Stop paying for PostHog, Sentry, and Hotjar separately. Reduce your vendor stack, cut costs, and eliminate data silos across teams.</p>
+          </div>
+        </div>
+
+        <div class="benefit-item">
+          <div class="benefit-icon">
+            <!-- lucide: clock -->
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="benefit-content">
+            <h3>Two-minute setup, zero maintenance</h3>
+            <p>Add one script tag and you're collecting data. No complex configurations, no SDK versioning headaches, no self-hosting burden. Auto-capture means you start getting insights before you even define your first custom event.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
   <section class="alt-bg" id="features">
     <div class="section-inner">
       <div class="section-header">
@@ -304,68 +674,112 @@
 
         <div class="feature-card">
           <div class="feature-icon">
+            <!-- lucide: code -->
             <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
           </div>
           <h3>Embed Script</h3>
-          <p>Lightweight JS snippet under 1KB gzipped. One-line install, no cookies by default, fully GDPR-compliant. Auto-captures page views and clicks out of the box.</p>
+          <p>Lightweight JS snippet under 1KB gzipped. One-line install, no cookies by default, fully GDPR-compliant. Auto-captures page views and clicks out of the box. The entry point for all data collection including error tracking.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
+            <!-- lucide: bar-chart-3 -->
             <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
           </div>
           <h3>Event Tracking</h3>
-          <p>Auto-capture page views, clicks, and form submissions. Custom event API for business-specific actions. Retroactive event definition from captured data so you never miss a signal.</p>
+          <p>Auto-capture page views, clicks, and form submissions. Custom event API for tracking business-specific actions like signups and purchases. Retroactive event definition from captured data — you never miss a signal.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
+            <!-- lucide: layout-dashboard -->
             <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
           </div>
           <h3>Dashboard</h3>
-          <p>Real-time analytics showing visitors, unique users, sessions, bounce rate, top pages, referrers, UTM breakdown, and geographic data. Customizable date ranges and comparison periods.</p>
+          <p>Real-time analytics dashboard showing visitors, unique users, sessions, bounce rate, top pages, referrers, UTM breakdown, and geographic data. Customizable date ranges, filters, and comparison periods.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <!-- lucide: git-branch -->
+            <svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
           </div>
           <h3>Funnels</h3>
-          <p>Define multi-step conversion funnels and visualize drop-off at each step. Filter by user properties, time range, or cohort. Compare funnel performance across segments.</p>
+          <p>Define multi-step conversion funnels and visualize drop-off at each step with exact percentages. Filter by user properties, time range, or cohort. Compare funnel performance across segments to find what converts.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
+            <!-- lucide: alert-circle -->
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           </div>
           <h3>Error Tracking</h3>
-          <p>Automatic JS error collection via the embed script. Stack traces with source map support, error grouping and deduplication, severity levels, and alert notifications via webhook or email.</p>
+          <p>Sentry-like error capture: automatic JS error collection via embed script, stack traces with source map support, error grouping and deduplication, severity levels, and alert notifications via webhook or email.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <!-- lucide: users -->
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           </div>
           <h3>User Sessions</h3>
-          <p>Session replay with lightweight DOM snapshots. User journey visualization showing page flow and navigation paths. Click heatmaps on any page to see where attention goes.</p>
+          <p>Session replay with lightweight DOM snapshots (not video recording). User journey visualization showing page flow and navigation paths. Click heatmaps on any page to see exactly where attention goes.</p>
         </div>
 
         <div class="feature-card">
           <div class="feature-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></svg>
+            <!-- lucide: plug -->
+            <svg viewBox="0 0 24 24"><path d="M12 22v-5"/><path d="M9 8V2"/><path d="M15 8V2"/><path d="M18 8v5a6 6 0 0 1-12 0V8Z"/></svg>
           </div>
           <h3>API Access</h3>
-          <p>REST API for querying all analytics data programmatically. Webhook support for real-time event forwarding. API key authentication with rate limiting built in.</p>
+          <p>REST API for querying all analytics data programmatically. Webhook support for real-time event forwarding. API key authentication with rate limiting. Integrate your analytics data into any workflow or tool.</p>
         </div>
 
       </div>
     </div>
   </section>
 
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Up and running in minutes</h2>
+        <p>Three simple steps to unlock the full picture of your product usage.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2rem;margin-top:2rem;">
+        <div style="text-align:center;padding:2rem;">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(30,58,95,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div style="font-size:0.8rem;font-weight:600;color:#1E3A5F;margin-bottom:0.5rem;">STEP 1</div>
+          <h3 style="font-size:1.15rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem;">Install the snippet</h3>
+          <p style="color:#64748b;font-size:0.95rem;line-height:1.6;">Add a single line of JavaScript to your site or app. Works with React, Vue, Next.js, and any HTML page. Takes under 2 minutes.</p>
+        </div>
+        <div style="text-align:center;padding:2rem;">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(30,58,95,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+          </div>
+          <div style="font-size:0.8rem;font-weight:600;color:#1E3A5F;margin-bottom:0.5rem;">STEP 2</div>
+          <h3 style="font-size:1.15rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem;">Data flows automatically</h3>
+          <p style="color:#64748b;font-size:0.95rem;line-height:1.6;">Page views, clicks, sessions, and custom events are captured in real-time. No manual tagging required — auto-capture handles the rest.</p>
+        </div>
+        <div style="text-align:center;padding:2rem;">
+          <div style="width:56px;height:56px;border-radius:50%;background:rgba(30,58,95,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          </div>
+          <div style="font-size:0.8rem;font-weight:600;color:#1E3A5F;margin-bottom:0.5rem;">STEP 3</div>
+          <h3 style="font-size:1.15rem;font-weight:600;color:#0f172a;margin-bottom:0.5rem;">Get actionable insights</h3>
+          <p style="color:#64748b;font-size:0.95rem;line-height:1.6;">Explore dashboards, funnels, retention charts, and heatmaps. Share reports with your team and make data-driven decisions from day one.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
   <section id="compare">
     <div class="section-inner">
       <div class="section-header">
-        <h2>How we compare</h2>
+        <h2>How Analytics Product compares</h2>
         <p>Full-featured analytics without the overhead, the complexity, or the privacy concerns.</p>
       </div>
       <table class="comparison-table">
@@ -377,59 +791,208 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Under 1KB embed script</td>
-            <td class="check">Yes</td>
-            <td class="cross">No</td>
-          </tr>
-          <tr>
-            <td>Cookie-free by default</td>
-            <td class="check">Yes</td>
-            <td class="cross">Varies</td>
-          </tr>
-          <tr>
-            <td>Auto event capture</td>
-            <td class="check">Yes</td>
-            <td class="check">Yes</td>
-          </tr>
-          <tr>
-            <td>Conversion funnels</td>
-            <td class="check">Yes</td>
-            <td class="check">Yes</td>
-          </tr>
-          <tr>
-            <td>Built-in error tracking</td>
-            <td class="check">Yes</td>
-            <td class="cross">Separate tool</td>
-          </tr>
-          <tr>
-            <td>Session replay</td>
-            <td class="check">Yes</td>
-            <td class="check">Add-on</td>
-          </tr>
-          <tr>
-            <td>GDPR-compliant out of box</td>
-            <td class="check">Yes</td>
-            <td class="cross">Config needed</td>
-          </tr>
-          <tr>
-            <td>REST API + Webhooks</td>
-            <td class="check">Yes</td>
-            <td class="check">Partial</td>
-          </tr>
+          <tr><td>Under 1KB embed script</td><td class="check">&#10003;</td><td class="cross">&#10005;</td></tr>
+          <tr><td>Cookie-free by default</td><td class="check">&#10003;</td><td class="cross">Varies</td></tr>
+          <tr><td>Auto event capture</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Conversion funnels</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Built-in error tracking</td><td class="check">&#10003;</td><td class="cross">Separate tool</td></tr>
+          <tr><td>Session replay</td><td class="check">&#10003;</td><td class="cross">Add-on</td></tr>
+          <tr><td>GDPR-compliant out of box</td><td class="check">&#10003;</td><td class="cross">Config needed</td></tr>
+          <tr><td>REST API + Webhooks</td><td class="check">&#10003;</td><td class="cross">Partial</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section class="cta alt-bg">
-    <h2>Start understanding your users today</h2>
-    <p>Add one script tag. Get complete product analytics in under two minutes.</p>
-    <a href="#" class="btn btn-primary">Get Started Free</a>
+  <!-- PRICING -->
+  <section class="alt-bg" id="pricing">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Simple, transparent pricing</h2>
+        <p>Start free. Scale when you need to. No surprises.</p>
+      </div>
+      <div class="pricing-grid">
+
+        <div class="pricing-card">
+          <h3>Free</h3>
+          <div class="price">$0<span>/mo</span></div>
+          <p class="price-note">Up to 10K events/month</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Embed Script</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Event Tracking (auto + custom)</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Real-time Dashboard</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 1 Funnel</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 7-day data retention</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <h3>Pro</h3>
+          <div class="price">$29<span>/mo</span></div>
+          <p class="price-note">Up to 500K events/month</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Everything in Free</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Unlimited Funnels</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Error Tracking + Source Maps</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> User Sessions + Heatmaps</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> API Access + Webhooks</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 1-year data retention</li>
+          </ul>
+          <a href="#" class="btn btn-primary">Start Pro Trial</a>
+        </div>
+
+        <div class="pricing-card">
+          <h3>Enterprise</h3>
+          <div class="price">Custom</div>
+          <p class="price-note">Unlimited events</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Everything in Pro</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Unlimited data retention</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SSO + SAML</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Dedicated support</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> SLA guarantee</li>
+            <li><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> On-premise option</li>
+          </ul>
+          <a href="#" class="btn btn-secondary">Contact Sales</a>
+        </div>
+
+      </div>
+    </div>
   </section>
 
-  <footer>
-    <p>Analytics Product — Built by Assimetria</p>
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Trusted by product teams</h2>
+        <p>Teams shipping fast rely on Analytics Product to understand what matters.</p>
+      </div>
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>"We replaced PostHog and a separate Sentry instance with Analytics Product. One script, half the cost, and the funnels are actually easier to set up. Our team had it running in production within 15 minutes."</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">SM</div>
+            <div>
+              <div class="name">Sara Mitchell</div>
+              <div class="role">Head of Product, Reflow</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>"The error tracking alone is worth it. Stack traces with source maps, grouped automatically — our engineers stopped context-switching between analytics and error tools. Session replay sealed the deal for our QA process."</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">DK</div>
+            <div>
+              <div class="name">Daniel Kim</div>
+              <div class="role">CTO, Launchable</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <blockquote>"Privacy compliance was a nightmare with our old setup. Analytics Product is cookie-free by default and GDPR-compliant out of the box. Our legal team was thrilled. The API access lets us pipe data into our BI stack seamlessly."</blockquote>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">LP</div>
+            <div>
+              <div class="name">Laura Petrov</div>
+              <div class="role">VP Engineering, NordStack</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta alt-bg" id="cta">
+    <h2>Start understanding your users today</h2>
+    <p>Add one script tag. Get complete product analytics in under two minutes. No credit card required.</p>
+    <a href="#" class="btn btn-primary btn-large">Get Started Free</a>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faqs">
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Frequently asked questions</h2>
+        <p>Everything you need to know about getting started.</p>
+      </div>
+      <div class="faq-list">
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>How does pricing work as I scale?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>The Free plan includes up to 10,000 events per month — enough for most early-stage products. Pro starts at $29/month for up to 500K events with all features unlocked. If you exceed your plan limit, we'll notify you before any changes. Enterprise plans offer unlimited events with custom pricing based on your volume.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>How long does setup take?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Under two minutes. Add a single script tag to your site and you're immediately collecting page views, clicks, and errors. No build step, no SDK installation, no configuration files. Custom events can be added with a one-line JavaScript call whenever you're ready.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>What integrations do you support?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Our REST API lets you query all analytics data programmatically and integrate with any BI tool, data warehouse, or internal dashboard. Webhooks forward events in real-time to Slack, PagerDuty, or your own endpoints. Error alerts can be routed to email or any webhook-compatible service.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>Is Analytics Product GDPR-compliant?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, by default. We don't use cookies, we don't collect PII, and we don't share data with third parties. The embed script is designed to be privacy-first from the ground up. In most jurisdictions, you don't need a consent banner for basic analytics. Enterprise customers get a DPA and can choose EU-only data residency.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>Do you offer dedicated support?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>All plans include email support with a 24-hour response time. Pro plans get priority support with a 4-hour response SLA during business hours. Enterprise plans include a dedicated account manager, shared Slack channel, and guaranteed SLA with uptime commitments.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            <span>Can I migrate from PostHog or Mixpanel?</span>
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. You can run Analytics Product alongside your existing tool during a transition period — just add our script tag. Historical data import is available on Pro and Enterprise plans via our API. Most teams run both tools in parallel for a week, then remove the old one once they're confident in the data.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <p>Analytics Product — Built by Assimetria &copy; 2026</p>
   </footer>
 
 </body>
