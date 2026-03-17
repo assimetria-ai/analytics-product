@@ -1,38 +1,40 @@
 # ─────────────────────────────────────────────────────────────────────────────
-#  Assimetria Product — Dockerfile (nginx + Express dual-server)
-#  Vite frontend build + Node.js backend + nginx reverse proxy
+#  Assimetria Product — Dockerfile (nginx + Express dual-server, Vite build)
+#  Stage 1 (client-build): Vite frontend → client/dist/
+#  Stage 2 (server-deps):  Node.js production dependencies
+#  Stage 3 (runner):       nginx + Node.js + tini
 # ─────────────────────────────────────────────────────────────────────────────
 
-# ── Stage 1: client build ──────────────────────────────────────────────────
+# ── Stage 1: client build ─────────────────────────────────────────────────────
 FROM node:20-alpine AS client-build
-WORKDIR /app
+WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm install 2>/dev/null || npm install --legacy-peer-deps
+RUN npm ci --ignore-scripts 2>/dev/null || npm install --legacy-peer-deps
 COPY client/ ./
 RUN npm run build
 
-# ── Stage 2: server deps ──────────────────────────────────────────────────
+# ── Stage 2: server production dependencies ───────────────────────────────────
 FROM node:20-alpine AS server-deps
-WORKDIR /app
-COPY server/package*.json ./server/
-RUN cd server && npm ci --omit=dev 2>/dev/null || cd server && npm install --omit=dev
+WORKDIR /app/server
+COPY server/package*.json ./
+RUN npm ci --omit=dev --ignore-scripts
 
-# ── Stage 3: runner (nginx + node) ────────────────────────────────────────
+# ── Stage 3: final runner ─────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
-WORKDIR /app
 
 RUN apk add --no-cache tini nginx postgresql-client
 
-# Server
+WORKDIR /app
+
+# Server production deps
 COPY --from=server-deps /app/server/node_modules ./server/node_modules
+
+# Server source
 COPY server/src/ ./server/src/
 COPY server/package*.json ./server/
 
-# @custom at project root (if exists)
-COPY @custom/ ./@custom/ 2>/dev/null || true
-
-# Built frontend → nginx serves from here
-COPY --from=client-build /app/dist /usr/share/nginx/html
+# Built frontend assets → nginx serves from here
+COPY --from=client-build /app/client/dist /usr/share/nginx/html
 
 # Landing page
 COPY landing.html /usr/share/nginx/html/landing.html
@@ -41,10 +43,14 @@ COPY landing.html /usr/share/nginx/html/landing.html
 RUN rm -f /etc/nginx/http.d/default.conf 2>/dev/null || true
 COPY nginx.production.conf /etc/nginx/http.d/default.conf
 
-# Start script
+# Startup script
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
+ENV NODE_ENV=production \
+    PORT=3001
+
 EXPOSE 80
+
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/start.sh"]
