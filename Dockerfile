@@ -36,9 +36,6 @@ COPY server/package*.json ./server/
 # Built frontend assets → nginx serves from here
 COPY --from=client-build /app/client/dist /usr/share/nginx/html
 
-# Landing page
-COPY landing.html /usr/share/nginx/html/landing.html
-
 # nginx config
 RUN rm -f /etc/nginx/http.d/default.conf 2>/dev/null || true
 COPY nginx.production.conf /etc/nginx/http.d/default.conf
