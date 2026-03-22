@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LogCatch - Error Monitoring & Log Management</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #E5484D;
+      --primary-light: #F06669;
+      --primary-dark: #C73236;
+      --accent: #30A46C;
+      --bg: #0a0a0f;
+      --surface: #111119;
+      --text: #ffffff;
+      --text-secondary: rgba(255,255,255,0.60);
+      --border: rgba(255,255,255,0.07);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 40px;
+      margin-bottom: 40px;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-icon {
+      color: var(--primary);
+    }
+
+    nav {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--text);
+    }
+
+    .cta-button {
+      background: var(--primary);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    .cta-button:hover {
+      background: var(--primary-light);
+    }
+
+    .hero {
+      margin-bottom: 60px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .tagline {
+      color: var(--primary);
+      font-size: 18px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      max-width: 600px;
+      line-height: 1.8;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+      border-color: var(--primary);
+      background: rgba(229, 72, 77, 0.05);
+    }
+
+    .feature-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(229, 72, 77, 0.1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+      color: var(--primary);
+      font-size: 20px;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .dashboard-preview {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 60px;
+    }
+
+    .dashboard-preview h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .error-list {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .error-item {
+      border-bottom: 1px solid var(--border);
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .error-item:last-child {
+      border-bottom: none;
+    }
+
+    .error-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: rgba(229, 72, 77, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .error-info {
+      flex: 1;
+    }
+
+    .error-title {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .error-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .error-count {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-critical {
+      background: rgba(229, 72, 77, 0.2);
+      color: var(--primary);
+    }
+
+    .status-resolved {
+      background: rgba(48, 164, 108, 0.2);
+      color: var(--accent);
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .cta-section h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .cta-section p {
+      color: var(--text-secondary);
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+      margin-top: 80px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      nav {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-content">
+        <div class="logo">
+          <span class="logo-icon">◊</span> LogCatch
+        </div>
+        <nav>
+          <a href="#features">Features</a>
+          <a href="#dashboard">Dashboard</a>
+          <a href="/docs">Documentation</a>
+          <a href="#" class="cta-button">Sign In</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="tagline">Error Monitoring & Log Management</div>
+        <h1>Catch Every Error.<br>Fix What Matters.</h1>
+        <p class="hero-subtitle">
+          Real-time error tracking with intelligent grouping, automated alerts, and release-aware insights.
+          Built for engineering teams who ship software continuously and need instant visibility into exceptions.
+        </p>
+      </section>
+
+      <section class="features-grid" id="features">
+        <div class="feature-card">
+          <div class="feature-icon">▢</div>
+          <h3>Error Ingestion</h3>
+          <p>Lightweight SDK with sub-50ms latency. Multi-language support for any framework.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">◆</div>
+          <h3>Smart Grouping</h3>
+          <p>90% noise reduction. One issue per root cause, not per occurrence.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">●</div>
+          <h3>Real-Time Dashboard</h3>
+          <p>Live error feed grouped by fingerprint with occurrence counts and severity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">▲</div>
+          <h3>Alert Rules</h3>
+          <p>Spike detection, new error types, regressions via email, Slack, or webhook.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">◉</div>
+          <h3>Release Tracking</h3>
+          <p>Pinpoint which deploy introduced regression with before/after charts.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">◈</div>
+          <h3>Team Scoping</h3>
+          <p>Multi-project support with team-based access and project-specific API keys.</p>
+        </div>
+      </section>
+
+      <section class="dashboard-preview" id="dashboard">
+        <h2>Error Dashboard Preview</h2>
+        <div class="error-list">
+          <div class="error-item">
+            <div class="error-icon">!</div>
+            <div class="error-info">
+              <div class="error-title">TypeError: Cannot read property 'map' of undefined</div>
+              <div class="error-meta">api/users.js:145 · 2,483 occurrences · Last 4h</div>
+            </div>
+            <span class="status-badge status-critical">CRITICAL</span>
+            <div class="error-count">2.4k</div>
+          </div>
+          <div class="error-item">
+            <div class="error-icon">!</div>
+            <div class="error-info">
+              <div class="error-title">ReferenceError: cache is not defined</div>
+              <div class="error-meta">middleware/auth.js:32 · Fixed in v2.1.0 · Last 2h</div>
+            </div>
+            <span class="status-badge status-resolved">RESOLVED</span>
+            <div class="error-count">38</div>
+          </div>
+          <div class="error-item">
+            <div class="error-icon">!</div>
+            <div class="error-info">
+              <div class="error-title">SyntaxError: Unexpected token in JSON at position 0</div>
+              <div class="error-meta">components/Parser.js:89 · 412 occurrences · Last 6h</div>
+            </div>
+            <span class="status-badge status-critical">HIGH</span>
+            <div class="error-count">412</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section">
+        <h2>Ready to catch every error?</h2>
+        <p>Get started with LogCatch in minutes. SDK integration takes less than 5 minutes.</p>
+        <a href="#" class="cta-button">Create Free Account</a>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 LogCatch. Part of the Assimetria OS product suite.</p>
+    </footer>
+  </div>
+</body>
+</html>

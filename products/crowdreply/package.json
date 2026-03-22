@@ -1,0 +1,25 @@
+{
+  "name": "@assimetria/crowdreply",
+  "version": "0.1.0",
+  "description": "AI search visibility platform for brand mentions and Reddit optimization",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "health": "curl -s http://localhost:3000/health | jq ."
+  },
+  "keywords": [
+    "ai-visibility",
+    "brand-monitoring",
+    "reddit-optimization",
+    "llm-citations"
+  ],
+  "author": "Assimetria",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4"
+  }
+}

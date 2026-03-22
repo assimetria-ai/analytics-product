@@ -1,0 +1,25 @@
+{
+  "name": "@assimetria/logcatch",
+  "version": "0.1.0",
+  "description": "Error monitoring and log management platform",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/server.js",
+    "start": "node src/server.js",
+    "health": "curl -s http://localhost:3000/health | jq ."
+  },
+  "keywords": [
+    "error-tracking",
+    "log-management",
+    "monitoring",
+    "exception-handling"
+  ],
+  "author": "Assimetria",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "compression": "^1.7.4"
+  }
+}
